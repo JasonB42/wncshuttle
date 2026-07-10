@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WNC Shuttle — Phase 3: The Narrowed Field</title>
+<style>
+  :root{
+    --ink:#e9e4d6;
+    --ink-soft:#b8b3a2;
+    --ink-faint:#7f8a7e;
+    --paper:#0c1512;
+    --paper-2:#111e18;
+    --panel:#132420;
+    --panel-2:#17302a;
+    --line:#26433a;
+    --line-soft:#1d352e;
+    --ever:#1f5140;
+    --ever-bright:#3c8a6c;
+    --slate:#5b7488;
+    --amber:#e2a24a;
+    --amber-bright:#f4c069;
+    --fog:#9fb4ac;
+    --danger:#d76a4c;
+    --danger-2:#e88a5f;
+    --shadow:0 18px 40px -20px rgba(0,0,0,.75);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,ui-serif,serif;
+  }
+  *{box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 78% -8%, rgba(46,110,88,.18), transparent 60%),
+      radial-gradient(900px 500px at 10% 8%, rgba(91,116,136,.12), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.62;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 120px}
+  h1,h2,h3,h4{font-family:var(--sans);line-height:1.12;letter-spacing:-.01em;font-weight:700}
+  a{color:var(--amber-bright);text-decoration:none}
+  .mono{font-family:var(--mono)}
+  .up{font-family:var(--sans);text-transform:uppercase;letter-spacing:.22em;font-size:.66rem;font-weight:700}
+
+  header.masthead{padding:64px 0 30px}
+  .kicker{color:var(--amber);letter-spacing:.34em;font-size:.62rem}
+  .masthead h1{
+    font-size:clamp(1.9rem,5.4vw,3.4rem);
+    margin:.35em 0 .1em;
+    background:linear-gradient(180deg,#f3ecda,#c6bfa8);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tagline{font-family:var(--serif);font-style:italic;color:var(--fog);font-size:clamp(1rem,2.4vw,1.25rem);margin:0 0 4px}
+  .tagline b{color:var(--amber-bright);font-style:normal;font-weight:600}
+  .metaline{color:var(--ink-faint);font-family:var(--mono);font-size:.78rem;margin-top:10px;letter-spacing:.02em}
+  .countbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:10px 15px;background:rgba(17,30,24,.6)}
+  .stat .n{font-family:var(--sans);font-weight:800;font-size:1.5rem;color:var(--amber-bright);line-height:1}
+  .stat .t{font-size:.62rem;color:var(--ink-faint);margin-top:5px}
+
+  /* method box */
+  .method{margin-top:28px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(19,36,32,.86),rgba(12,21,18,.86));padding:18px 20px}
+  .method .up{color:var(--amber)}
+  .method p{margin:8px 0 0;color:var(--ink-soft);font-size:.92rem;max-width:76ch}
+  .method p b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  section{margin-top:64px;scroll-margin-top:20px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);color:var(--amber);font-size:.8rem;letter-spacing:.1em;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+  .sec-head h2{font-size:clamp(1.4rem,3.6vw,2rem);margin:0}
+  .sec-head .sub{color:var(--fog);font-style:italic;font-family:var(--serif);flex-basis:100%;font-size:1rem;margin-top:2px}
+  .lead{color:var(--ink-soft);max-width:68ch;margin:0 0 22px}
+  .lead b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  /* effort filter */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;align-items:center;position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--paper) 75%,transparent);padding:12px 0 14px}
+  .filters .flab{font-size:.66rem;color:var(--ink-faint);font-family:var(--sans);letter-spacing:.12em;text-transform:uppercase;margin-right:4px}
+  .fbtn{font-family:var(--sans);font-size:.76rem;background:transparent;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;transition:.15s}
+  .fbtn:hover{border-color:var(--amber);color:var(--ink)}
+  .fbtn.on{background:var(--amber);color:#0c1512;border-color:var(--amber);font-weight:700}
+
+  /* idea cards */
+  .cards{display:grid;gap:14px}
+  @media(min-width:820px){.cards{grid-template-columns:1fr 1fr}}
+  .card{border:1px solid var(--line-soft);border-radius:12px;padding:16px 18px;background:rgba(17,30,24,.55);border-left:3px solid var(--ever-bright)}
+  .card.hidden{display:none}
+  .card h3{font-size:1rem;margin:0 0 6px;color:var(--ink)}
+  .card h3 .id{font-family:var(--mono);font-size:.66rem;color:var(--ink-faint);font-weight:400;margin-right:6px}
+  .card p{margin:0;font-size:.88rem;color:var(--ink-soft);line-height:1.5}
+  .card .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+  .chip{font-family:var(--mono);font-size:.6rem;letter-spacing:.05em;padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--ink-soft);white-space:nowrap}
+  .chip.e0{color:#9fc9b6;border-color:rgba(60,138,108,.55);background:rgba(31,81,64,.22)}
+  .chip.eS{color:#9fc9b6;border-color:rgba(60,138,108,.4)}
+  .chip.eM{color:var(--amber-bright);border-color:rgba(226,162,74,.5)}
+  .chip.eL{color:var(--danger-2);border-color:rgba(215,106,76,.5)}
+  .chip.also{color:var(--slate);border-color:rgba(91,116,136,.5)}
+  .chip.dep{color:var(--fog)}
+  .chip.now{background:var(--amber-bright);color:#0c1512;border-color:var(--amber-bright);font-weight:700}
+  .card .moves{margin-top:10px;font-family:var(--mono);font-size:.68rem;color:var(--ever-bright)}
+
+  /* group accents */
+  section.g-fill .card{border-left-color:var(--amber)}
+  section.g-time .card{border-left-color:var(--ever-bright)}
+  section.g-market .card{border-left-color:var(--slate)}
+  section.g-asset .card{border-left-color:var(--amber-bright)}
+  section.g-found .card{border-left-color:var(--fog)}
+
+  /* narrowed field */
+  .tiers{display:grid;gap:18px}
+  .tier{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .tier .th{padding:16px 20px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(226,162,74,.14),transparent)}
+  .tier.t2 .th{background:linear-gradient(90deg,rgba(60,138,108,.14),transparent)}
+  .tier.t3 .th{background:linear-gradient(90deg,rgba(91,116,136,.12),transparent)}
+  .tier .th .up{color:var(--amber)}
+  .tier.t2 .th .up{color:var(--ever-bright)}
+  .tier.t3 .th .up{color:var(--slate)}
+  .tier .th h3{margin:4px 0 0;font-size:1.15rem}
+  .tier ul{list-style:none;margin:0;padding:6px 0}
+  .tier li{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:12px 20px;font-size:.92rem;color:var(--ink-soft);border-top:1px solid var(--line-soft);align-items:start}
+  .tier li:first-child{border-top:none}
+  .tier li b{color:var(--ink);font-family:var(--sans);font-weight:600}
+  .tier li .ref{font-family:var(--mono);font-size:.64rem;color:var(--ink-faint);border:1px solid var(--line);border-radius:5px;padding:3px 7px;margin-top:2px;white-space:nowrap}
+
+  /* parked */
+  .parked{border:1px dashed var(--danger);border-radius:14px;background:#100f0b;padding:8px 4px}
+  .parked-head{font-family:var(--mono);color:var(--danger-2);font-size:.82rem;padding:14px 18px 6px;letter-spacing:.04em}
+  .parked ul{list-style:none;margin:0;padding:0}
+  .parked li{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:13px 18px;border-top:1px solid #1d1913;font-size:.92rem;color:var(--ink-soft)}
+  .parked li .x{color:var(--danger);font-family:var(--sans);font-weight:800}
+  .parked li b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  .synth-note{margin-top:26px;border-left:3px solid var(--amber);background:linear-gradient(90deg,rgba(226,162,74,.08),transparent);padding:14px 18px;border-radius:0 10px 10px 0}
+  .synth-note .up{color:var(--amber)}
+  .synth-note p{margin:6px 0 0;color:var(--ink);font-size:.96rem}
+
+  footer{margin-top:80px;text-align:center;color:var(--ink-faint);font-size:.72rem;font-family:var(--mono);border-top:1px solid var(--line-soft);padding-top:28px}
+</style>
+</head>
+<body>
+
+<svg class="topo" viewBox="0 0 1200 1600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <g fill="none" stroke="#274a3f" stroke-width="1.1" opacity="0.55">
+    <path d="M-50,220 C220,120 460,300 700,210 C920,128 1080,300 1260,240"/>
+    <path d="M-50,300 C220,200 470,380 700,290 C930,208 1080,380 1260,320"/>
+    <path d="M-50,380 C220,290 480,460 700,370 C940,290 1085,460 1260,400"/>
+    <path d="M-50,470 C230,380 480,540 700,460 C940,382 1090,540 1260,490"/>
+    <path d="M-50,600 C240,520 470,660 700,600 C930,545 1090,660 1260,620"/>
+    <path d="M-50,760 C240,690 470,820 700,770 C930,725 1090,820 1260,790"/>
+    <path d="M-50,940 C240,870 470,1000 700,950 C930,905 1090,1000 1260,970"/>
+    <path d="M-50,1140 C240,1070 470,1200 700,1150 C930,1105 1090,1200 1260,1170"/>
+    <path d="M-50,1340 C240,1270 470,1400 700,1350 C930,1305 1090,1400 1260,1370"/>
+  </g>
+  <g fill="none" stroke="#3a6a58" stroke-width="1.4" stroke-dasharray="2 9" opacity="0.5" stroke-linecap="round">
+    <path d="M120,1500 C260,1200 180,980 360,760 C520,560 460,360 620,180 C740,60 720,-40 900,-120"/>
+  </g>
+</svg>
+
+<div class="wrap">
+
+  <nav style="padding-top:28px;font-family:var(--mono);font-size:.78rem">
+    <a href="index.html">&larr; Project Index</a>
+    <span style="color:var(--ink-faint)"> &nbsp;·&nbsp; </span>
+    <a href="context.html">Context &amp; Research</a>
+    <span style="color:var(--ink-faint)"> &nbsp;·&nbsp; </span>
+    <a href="ideas.html">Brainstorm Archive</a>
+  </nav>
+
+  <!-- ============ HEADER ============ -->
+  <header class="masthead">
+    <div class="kicker mono">PHASE 3 · ORGANIZATION &amp; SCOPE · DRAFT FOR REVIEW</div>
+    <h1>The Narrowed Field</h1>
+    <p class="tagline">118 raw ideas from the <a href="ideas.html">brainstorm archive</a>, deduplicated and consolidated into <b>41 candidates</b> across five groups — then narrowed to what to actually do.</p>
+    <div class="metaline">Every card keeps its lineage: nothing was deleted, only merged, grouped, or parked with a reason.</div>
+
+    <div class="countbar">
+      <div class="stat"><div class="n">118</div><div class="t up">RAW IDEAS IN</div></div>
+      <div class="stat"><div class="n">41</div><div class="t up">CONSOLIDATED</div></div>
+      <div class="stat"><div class="n">5</div><div class="t up">GROUPS</div></div>
+      <div class="stat"><div class="n">6</div><div class="t up">DO-NOW MOVES</div></div>
+      <div class="stat"><div class="n">8</div><div class="t up">PARKED</div></div>
+    </div>
+
+    <div class="method">
+      <div class="up">How the grouping works</div>
+      <p>Each idea has exactly <b>one primary group</b> — the reason you&rsquo;d build it — and overlap shows up as <b>&ldquo;also:&rdquo; tags</b> instead of a filing argument. The four outcome groups are <b>Fill the Vehicle</b> (utilization — the save-money bucket, reframed), <b>Buy Back Justin&rsquo;s Time</b> (admin hours become sellable capacity), <b>Grow the Market</b> (new demand), and <b>Build the Asset</b> (things that make the business itself more valuable, like the concierge). A fifth group, <b>Foundation</b>, protects the enablers — data capture and schema work that produce no direct outcome but that everything else depends on.</p>
+      <p>Every card carries an <b>effort chip</b> ($0 / small / medium / large), the <b>metric it moves</b>, and any dependency. Ideas that violate a red line from the <a href="context.html">context dossier</a> are parked at the bottom, not deleted.</p>
+    </div>
+  </header>
+
+  <div class="filters" id="effortFilter">
+    <span class="flab">Effort</span>
+    <button class="fbtn on" data-e="all">All 41</button>
+    <button class="fbtn" data-e="e0">$0 · do it Monday</button>
+    <button class="fbtn" data-e="eS">Small · days</button>
+    <button class="fbtn" data-e="eM">Medium · weeks</button>
+    <button class="fbtn" data-e="eL">Large · a season</button>
+  </div>
+
+  <!-- ============ F. FOUNDATION ============ -->
+  <section id="foundation" class="g-found">
+    <div class="sec-head">
+      <span class="sec-num">F</span>
+      <h2>Foundation</h2>
+      <div class="sub">No direct payoff — and everything above depends on them. Protected from outcome-scoring on purpose.</div>
+    </div>
+    <p class="lead">The Phase 2 verdict was blunt: <b>no corpus, no intelligence</b>. These nine start first, and most are free.</p>
+
+    <div class="cards">
+      <div class="card" data-e="eS">
+        <h3><span class="id">F1</span>The canonical trip object</h3>
+        <p>One trip record every system reads and writes — the single-entry schema that makes every later automation trivial instead of a translation layer. The architecture decision of the whole project.</p>
+        <div class="meta"><span class="chip now">BUILD B</span><span class="chip eS">SMALL</span><span class="chip also">also: time</span></div>
+        <div class="moves">moves → admin-hours-removed (rekeying dies here)</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">F2</span>Silent travel-time logging</h3>
+        <p>Every trip quietly records actual vs. predicted time. Free data collection, compounding value — the seed of the proprietary mountain travel-time model (A2).</p>
+        <div class="meta"><span class="chip now">BUILD B</span><span class="chip eS">SMALL</span><span class="chip also">also: asset</span><span class="chip dep">needs F1</span></div>
+        <div class="moves">moves → the moat (data Google doesn&rsquo;t have)</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">F3</span>The workflow map</h3>
+        <p>A written map of every touchpoint from inquiry to payment — the highest-value first deliverable, and it isn&rsquo;t software. Names where the rekeying, gaps, and after-hours leaks actually are.</p>
+        <div class="meta"><span class="chip e0">$0</span></div>
+        <div class="moves">moves → everything downstream gets scoped correctly</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">F4</span>Encode the 30-second gate</h3>
+        <p>Sit with Justin and write down what he actually checks before confirming a booking — vehicle fit, road, season, schedule, gut. That checklist is the company&rsquo;s core business logic, currently undocumented.</p>
+        <div class="meta"><span class="chip e0">$0</span><span class="chip also">also: time</span></div>
+        <div class="moves">moves → unlocks T4 pre-clearing later</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">F5</span>The lost-quote log</h3>
+        <p>Start recording every quote that doesn&rsquo;t convert, and why. The most valuable dataset the business isn&rsquo;t collecting — it feeds follow-ups (T8), the waitlist (V4), and strategy (A7).</p>
+        <div class="meta"><span class="chip e0">$0</span><span class="chip also">also: market</span></div>
+        <div class="moves">moves → quote-to-book conversion</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">F6</span>The refused-ride log</h3>
+        <p>Log every trip declined because no vehicle could reach it or the calendar was full. A map of refused demand is the business case for vehicle #4 — and referral fees today.</p>
+        <div class="meta"><span class="chip e0">$0</span><span class="chip also">also: market</span></div>
+        <div class="moves">moves → future fleet &amp; partner decisions</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">F7</span>The seed corpus</h3>
+        <p>Justin records himself talking about mountain roads for 30 minutes on his phone. That transcript seeds the Road Brain (A1), the writing voice, and the driver handbook. Costs a walk.</p>
+        <div class="meta"><span class="chip e0">$0</span><span class="chip also">also: asset</span></div>
+        <div class="moves">moves → training data for everything</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">F8</span>The ingestion layer</h3>
+        <p>Pull bookingtool.net data (export, webhook, or API — see open question Q3) into a database the business owns. You cannot automate what you cannot query, and this is the exit ramp from platform lock-in.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip dep">blocked on Q3</span></div>
+        <div class="moves">moves → owns the data that trains everything else</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">F9</span>The autonomy ladder</h3>
+        <p>Standing policy, not software: every feature ships as draft-for-human, graduates to human-approves after 50 correct drafts, and only reaches autonomous for reversible or strictly grounded actions.</p>
+        <div class="meta"><span class="chip e0">$0 · POLICY</span></div>
+        <div class="moves">moves → trust, and the 4am-debug risk</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ V. FILL THE VEHICLE ============ -->
+  <section id="fill" class="g-fill">
+    <div class="sec-head">
+      <span class="sec-num">V</span>
+      <h2>Fill the Vehicle</h2>
+      <div class="sub">Utilization — deadhead miles and idle hours are the enemy, not customer count. The &ldquo;save money&rdquo; group, reframed.</div>
+    </div>
+    <p class="lead">With three vehicles and fixed capacity, <b>round-trip attach rate</b> is the highest-leverage number in the business.</p>
+
+    <div class="cards">
+      <div class="card" data-e="eS">
+        <h3><span class="id">V1</span>Return-leg attach at quote time</h3>
+        <p>Half of every airport run is paid fuel and driver at zero revenue. Offer the return leg to the <em>same client, in the same quote</em>, at a discount. Not dynamic pricing — a published round-trip rate.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: money</span></div>
+        <div class="moves">moves → round-trip attach rate (the #1 metric)</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">V2</span>Standing corridor contracts</h3>
+        <p>The deadhead is predictable — same corridor, same time. Match it against scheduled demand (pharmacy runs, document courier for Waynesville businesses) as standing contracts, not a marketplace.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: market</span></div>
+        <div class="moves">moves → revenue per deadhead mile</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">V3</span>The flex-window rate</h3>
+        <p>Client accepts a 90-minute pickup window for ~25% off; the flexibility lets the schedule pack tighter. AI proposes the windows; Justin approves. A published rate class, not a negotiation.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: money</span></div>
+        <div class="moves">moves → trips per vehicle-day</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">V4</span>The cancellation waitlist</h3>
+        <p>A cancellation at 25 hours out currently leaves a hole nothing fills. Instantly offer the freed slot to the lost-quote log (F5) — turning yesterday&rsquo;s no into today&rsquo;s yes.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip dep">needs F5</span></div>
+        <div class="moves">moves → recovered revenue per cancellation</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">V5</span>Daily assignment optimizer</h3>
+        <p>Given tomorrow&rsquo;s confirmed rides, propose the vehicle-to-trip assignment that minimizes deadhead miles. With 3 vehicles the problem is small enough to solve exactly; Justin gets one approval.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: time</span><span class="chip dep">needs F1</span></div>
+        <div class="moves">moves → deadhead miles per day</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">V6</span>Capacity broadcast</h3>
+        <p>A simple &ldquo;I have capacity Saturday&rdquo; signal to the partner network (cabin hosts, venues, guides) — the mycelial chemical signal. Beats any ad because it reaches people mid-booking.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: market</span></div>
+        <div class="moves">moves → fill rate on soft days</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ T. BUY BACK JUSTIN'S TIME ============ -->
+  <section id="time" class="g-time">
+    <div class="sec-head">
+      <span class="sec-num">T</span>
+      <h2>Buy Back Justin&rsquo;s Time</h2>
+      <div class="sub">Attention is the scarce resource. Every admin hour removed is sellable capacity — saving time IS revenue here.</div>
+    </div>
+    <p class="lead">The gate stays human. The point is that the <b>easy 80% stops touching it</b>, and nothing leaks at 11pm.</p>
+
+    <div class="cards">
+      <div class="card" data-e="eM">
+        <h3><span class="id">T1</span>After-hours capture</h3>
+        <p>The 11pm voicemail answered at 8am already booked a competitor at 11:15. An after-hours responder texts back an estimate and a promise of human confirmation, gathers trip details, never quotes a binding price.</p>
+        <div class="meta"><span class="chip now">BUILD A</span><span class="chip eM">MEDIUM</span><span class="chip also">also: market</span></div>
+        <div class="moves">moves → after-hours lead recovery rate</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">T2</span>FAQ-grounded chatbot</h3>
+        <p>Grounded strictly in the unusually thorough FAQ page — the cheapest, safest AI win available, and it converts. Answers the questions that precede every booking, 24/7.</p>
+        <div class="meta"><span class="chip now">BUILD A</span><span class="chip eS">SMALL</span><span class="chip also">also: market</span></div>
+        <div class="moves">moves → inquiries answered without Justin</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">T3</span>Inquiry triage classifier</h3>
+        <p>Score every inbound inquiry bookable / needs-Justin / decline. Auto-decline pet and wheelchair requests politely and instantly, with a referral to someone who can serve them. The boring classifier that 2030-Justin said mattered most.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span></div>
+        <div class="moves">moves → interruptions per day</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">T4</span>One-tap confirmation pre-clear</h3>
+        <p>Using the encoded gate rules (F4), AI pre-checks the easy 80% and sends Justin an approve/deny SMS with a drafted summary and recommendation. The gate stays human; the friction doesn&rsquo;t.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip dep">needs F4</span></div>
+        <div class="moves">moves → seconds per confirmation</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">T5</span>Phone-line wrap</h3>
+        <p>A Twilio number that forwards to Justin unchanged but records, transcribes, and summarizes every call into a lead row. The line still rings a human — the data just stops evaporating.</p>
+        <div class="meta"><span class="chip eS">SMALL</span></div>
+        <div class="moves">moves → leads captured per call</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">T6</span>Drafted confirmation email</h3>
+        <p>AI drafts the confirmation with route-specific local color (&ldquo;we&rsquo;ll take 276, not the Parkway — it closes at dusk this time of year&rdquo;); Justin approves and sends. Interim $0 version: turn on the booking tool&rsquo;s own confirmation email.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: asset</span></div>
+        <div class="moves">moves → minutes per booking</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">T7</span>Quote-assistant webform</h3>
+        <p>Asks the four questions the booking tool doesn&rsquo;t (luggage, pace, road surface, kids) and pre-fills a real quote for Justin to confirm — fewer back-and-forth texts per quote.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span></div>
+        <div class="moves">moves → touches per quote</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">T8</span>Lost-quote follow-up</h3>
+        <p>An AI-drafted follow-up per lost quote with a specific objection guess (price, timing, road uncertainty) — plus a quote-to-book model that tells Justin which three quotes to personally call today.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: market</span><span class="chip dep">needs F5</span></div>
+        <div class="moves">moves → quote conversion</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">T9</span>Ride-complete automation</h3>
+        <p>Trip completion triggers Stripe capture, receipt, and a Google-review text 90 minutes after drop-off — when warmth is highest. Wait-time surcharges computed from GPS dwell and evidenced.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: market · money</span></div>
+        <div class="moves">moves → review count + days-to-payment</div>
+      </div>
+      <div class="card" data-e="eL">
+        <h3><span class="id">T10</span>Flight-delay agent</h3>
+        <p>Watches the flight feed; on a delay it drafts the client SMS, reshuffles the day&rsquo;s schedule, and presents Justin one approval. Extends the flight tracking that already exists internally.</p>
+        <div class="meta"><span class="chip eL">LARGE</span><span class="chip dep">needs F1</span></div>
+        <div class="moves">moves → 5am scrambles per month</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">T11</span>Driver ops kit</h3>
+        <p>Merged: shared-Sheet dispatch board today, offline-first PWA later (schedule, nav link, checklist, drop photo); AI-generated 1099 handbook, route briefings, and a road-certification quiz — onboarding in 45 minutes, not two weeks. Offline policy assistant in the field.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: asset</span></div>
+        <div class="moves">moves → driver onboarding time · cross-coverage</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ M. GROW THE MARKET ============ -->
+  <section id="market" class="g-market">
+    <div class="sec-head">
+      <span class="sec-num">M</span>
+      <h2>Grow the Market</h2>
+      <div class="sub">New demand — through partners who touch the guest first, and owned channels instead of rented ones.</div>
+    </div>
+    <p class="lead">The mycelial rule: <b>grow the network of referrers, not the fleet</b>. Ten cabin hosts beat one more Navigator.</p>
+
+    <div class="cards">
+      <div class="card" data-e="eS">
+        <h3><span class="id">M1</span>Cabin-host channel</h3>
+        <p>Hosts touch the guest three months before Justin could. $0 start: call every host he&rsquo;s driven a guest for and ask for a link. Scale-up: a co-branded transport page and referral code per host.</p>
+        <div class="meta"><span class="chip e0">$0 START</span><span class="chip eS">SMALL TO SCALE</span></div>
+        <div class="moves">moves → bookings at cabin-booking time, not landing time</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">M2</span>The Harrah&rsquo;s ask</h3>
+        <p>Ask the Harrah&rsquo;s Cherokee concierge for a standing &ldquo;safe ride home&rdquo; arrangement — recurring revenue at zero marketing cost. The worst answer is no.</p>
+        <div class="meta"><span class="chip e0">1 ASK</span><span class="chip also">also: fill</span></div>
+        <div class="moves">moves → recurring corridor revenue</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">M3</span>Outfitter &amp; guide hand-offs</h3>
+        <p>Fly-fishing guides and outfitters are symbionts, not competitors — they need clients delivered to remote water. A shared booking hand-off; later, river-condition nudges to past anglers with one-tap rebook.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span></div>
+        <div class="moves">moves → referred trips per season</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">M4</span>Wedding coordinator tool</h3>
+        <p>Give Maggie Valley venue coordinators a free AI-built &ldquo;guest transport plan&rdquo; generator — and become the default shuttle on every plan it produces.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: asset</span></div>
+        <div class="moves">moves → weddings per season</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">M5</span>Partner operator network</h3>
+        <p>For trips too far from base: a Bryson City or Franklin operator, revenue-shared, disclosed to the client, contractually held to standard. The opposite of a farm-out — and it monetizes the refused-ride log (F6).</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip dep">needs F6</span></div>
+        <div class="moves">moves → revenue per refused ride</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">M6</span>Owned-content rebuild</h3>
+        <p>Re-publish the 10 dead posts with updated dates and internal links ($0); AI-drafted seasonal pages published six weeks before demand spikes (leaf, ski, Apple Festival), syndicated <em>to</em> Facebook — own the asset, rent the reach. Hand-approved pages only; no programmatic flood.</p>
+        <div class="meta"><span class="chip e0">$0 START</span><span class="chip eS">SMALL</span></div>
+        <div class="moves">moves → organic bookings per season</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">M7</span>GBP &amp; review engine</h3>
+        <p>&ldquo;We go where others won&rsquo;t&rdquo; on the Google Business Profile, weekly trailhead photos (driver photos become the proof engine), and asking every happy client for the review in the car, by name. Later: the automated 90-minute review text (T9).</p>
+        <div class="meta"><span class="chip e0">$0</span></div>
+        <div class="moves">moves → review count — nothing moves local search harder</div>
+      </div>
+      <div class="card" data-e="e0">
+        <h3><span class="id">M8</span>Fare estimates on the site</h3>
+        <p>Three sample routes with real prices. The FAQ already explains the pricing factors — publishing examples removes the largest silent objection at zero cost.</p>
+        <div class="meta"><span class="chip e0">$0</span></div>
+        <div class="moves">moves → quote requests per visitor</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">M9</span>Referral truth-tracking</h3>
+        <p>Slime-mold routing: track which referral sources actually convert and starve the rest. Plus the one-question text to the last 100 clients — &ldquo;what almost stopped you from booking?&rdquo; — which is the marketing roadmap.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: foundation</span></div>
+        <div class="moves">moves → cost per converted referral</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ A. BUILD THE ASSET ============ -->
+  <section id="asset" class="g-asset">
+    <div class="sec-head">
+      <span class="sec-num">A</span>
+      <h2>Build the Asset</h2>
+      <div class="sub">Things that make the business itself more valuable — the moat, the memory, and the experiences nobody else can copy.</div>
+    </div>
+    <p class="lead">The moat is not the 4x4s — it is <b>knowing which roads the 4x4s can survive</b>. Digitizing that is risk mitigation, training set, and the only licensable asset, all at once.</p>
+
+    <div class="cards">
+      <div class="card" data-e="eM">
+        <h3><span class="id">A1</span>The Mountain Road Brain</h3>
+        <p>A simple table first — road, vehicle, season, verdict, last-verified, driver note — filled by a weekly hour-long interview agent that mines Justin&rsquo;s memory chunk by chunk. The most boring idea in the field, and probably the most valuable. Licensable by 2030.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: time · market</span><span class="chip dep">seeded by F7</span></div>
+        <div class="moves">moves → the succession risk &amp; the moat</div>
+      </div>
+      <div class="card" data-e="eL">
+        <h3><span class="id">A2</span>Mountain travel-time model</h3>
+        <p>Trained on the trip logs (F2) to correct Google&rsquo;s badly wrong ETAs — the 22-minute last mile Google calls 8. Prevents the 5am airport miss; becomes proprietary data nobody else can buy.</p>
+        <div class="meta"><span class="chip eL">LARGE</span><span class="chip dep">needs a season of F2 data</span></div>
+        <div class="moves">moves → on-time rate · quote accuracy</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">A3</span>Client memory</h3>
+        <p>A lightweight CRM the AI maintains: who repeats, who hates small talk, who wants the history of Cataloochee. A one-line preference note at trip start is the cheapest luxury upgrade in the business.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: time</span></div>
+        <div class="moves">moves → repeat-booking rate</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">A4</span>Trailhead Concierge</h3>
+        <p>Name the hike; it plans drop point, pickup point, pace buffer, and weather bail-out. Turns a ride into a planned experience — the premium product for the &ldquo;we go where others won&rsquo;t&rdquo; trips that carry 3&times; margin.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip also">also: market</span><span class="chip dep">needs A1</span></div>
+        <div class="moves">moves → premium-trip share of revenue</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">A5</span>Road-condition risk score</h3>
+        <p>The night before each trip: ice, fog, downed-tree risk scored per route, flagging what to re-plan. Safety encoded — vital when the differentiator is safety and the drivers are contractors.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span><span class="chip dep">needs A1</span></div>
+        <div class="moves">moves → incidents avoided · re-plans before 4am</div>
+      </div>
+      <div class="card" data-e="eM">
+        <h3><span class="id">A6</span>In-vehicle offline guide</h3>
+        <p>&ldquo;What&rsquo;s that mountain?&rdquo; answered with no cell signal — a luxury touch that works precisely where the service area is. Pairs with the dashcam driver scorecard for the safety story.</p>
+        <div class="meta"><span class="chip eM">MEDIUM</span></div>
+        <div class="moves">moves → the story clients retell</div>
+      </div>
+      <div class="card" data-e="eS">
+        <h3><span class="id">A7</span>Revenue-mix analytics</h3>
+        <p>Auto-categorize every past trip (airport / trailhead / casino / wedding) to reveal the real revenue mix — which nobody precisely knows. Monthly &ldquo;what people asked for that we couldn&rsquo;t serve&rdquo; report from the logs.</p>
+        <div class="meta"><span class="chip eS">SMALL</span><span class="chip also">also: foundation</span><span class="chip dep">needs F8</span></div>
+        <div class="moves">moves → where the software points next</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE NARROWED FIELD ============ -->
+  <section id="narrow">
+    <div class="sec-head">
+      <span class="sec-num">CUT</span>
+      <h2>The Narrowing</h2>
+      <div class="sub">Scored by effort against the two money metrics — round-trip attach rate and admin-hours-removed — and checked against the red lines.</div>
+    </div>
+
+    <div class="tiers">
+      <div class="tier">
+        <div class="th">
+          <div class="up">Tier 1 · Do now</div>
+          <h3>Six moves — nearly all free, all compounding</h3>
+        </div>
+        <ul>
+          <li><span class="ref">F3+F4</span><span><b>Map the workflow and encode the gate.</b> One sit-down produces both. Everything else is scoped by what this reveals.</span></li>
+          <li><span class="ref">F5+F6+F7</span><span><b>Start the three logs and record the seed corpus.</b> Lost quotes, refused rides, road talk — the free data collection that must start today.</span></li>
+          <li><span class="ref">F1+F2</span><span><b>Build the trip object with silent time-logging.</b> Phase 2&rsquo;s BUILD B, unchanged. Small, boring, foundational.</span></li>
+          <li><span class="ref">T2+T1</span><span><b>Ship the FAQ chatbot, then after-hours capture.</b> Phase 2&rsquo;s BUILD A — the converting win, in two steps with the chatbot first.</span></li>
+          <li><span class="ref">V1</span><span><b>Put the round-trip rate in every airport quote.</b> The single highest-leverage pricing change, and it&rsquo;s a rate card edit.</span></li>
+          <li><span class="ref">M1+M2+M7+M8</span><span><b>Run the $0 market plays.</b> Cabin-host link asks, the Harrah&rsquo;s ask, GBP + in-car review asks, fare examples on the site.</span></li>
+        </ul>
+      </div>
+
+      <div class="tier t2">
+        <div class="th">
+          <div class="up">Tier 2 · Next — after Tier 1 data exists</div>
+          <h3>The attention buy-backs and the first asset work</h3>
+        </div>
+        <ul>
+          <li><span class="ref">T4</span><span><b>One-tap confirmation pre-clear</b> — as soon as F4&rsquo;s rules hold up against real bookings.</span></li>
+          <li><span class="ref">T5+T6+T9</span><span><b>Phone wrap, drafted confirmations, ride-complete automation</b> — the admin loop, closed.</span></li>
+          <li><span class="ref">T8+V4</span><span><b>Work the lost-quote log</b> — follow-ups and the cancellation waitlist.</span></li>
+          <li><span class="ref">A1</span><span><b>Start the Mountain Road Brain</b> — the weekly interview hour begins once the seed corpus proves the format.</span></li>
+          <li><span class="ref">A3</span><span><b>Client memory</b> — preference notes riding on the trip object.</span></li>
+          <li><span class="ref">F8+A7</span><span><b>Ingestion layer &amp; revenue-mix analytics</b> — gated on the bookingtool.net export answer (Q3).</span></li>
+        </ul>
+      </div>
+
+      <div class="tier t3">
+        <div class="th">
+          <div class="up">Tier 3 · Later — needs data, partners, or a season of proof</div>
+          <h3>The compounders</h3>
+        </div>
+        <ul>
+          <li><span class="ref">A2</span><span><b>Travel-time model</b> — after a season of F2 logs.</span></li>
+          <li><span class="ref">A4+A5</span><span><b>Trailhead Concierge &amp; risk scoring</b> — after the Road Brain has real coverage.</span></li>
+          <li><span class="ref">V2+V3+V5</span><span><b>Corridor contracts, flex windows, assignment optimizer</b> — utilization mechanics once volume data exists.</span></li>
+          <li><span class="ref">M3+M4+M5</span><span><b>Guide, wedding &amp; operator partnerships</b> — capped at 8&ndash;12 active partners; each is a human relationship.</span></li>
+          <li><span class="ref">T3+T10+T11</span><span><b>Triage classifier, flight agent, driver ops kit</b> — worth it at higher volume or the next driver hire.</span></li>
+          <li><span class="ref">A6</span><span><b>In-vehicle guide</b> — the luxury flourish, after the fundamentals.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="synth-note">
+      <div class="up">The shape of the cut</div>
+      <p>Tier 1 costs almost nothing and is mostly <b>data capture plus the two Phase 2 build picks</b>. Every Tier 2 and 3 item consumes what Tier 1 produces. If Tier 1 stalls, nothing above it is worth building — which is exactly the order of operations the $0 Mandate predicted.</p>
+    </div>
+  </section>
+
+  <!-- ============ PARKED ============ -->
+  <section id="parked">
+    <div class="sec-head">
+      <span class="sec-num">✕</span>
+      <h2>Parked — With Reasons</h2>
+      <div class="sub">Not deleted. Each has a written reason and a condition that would reopen it.</div>
+    </div>
+
+    <div class="parked">
+      <div class="parked-head"># parked.txt — reopen only if the stated condition changes</div>
+      <ul>
+        <li><span class="x">✕</span><span><b>Dynamic / surge pricing.</b> Collides with &ldquo;we do not negotiate rates.&rdquo; Published rate classes (round-trip, flex-window) deliver the economics without the brand damage. <em>Reopen: never — the discounts stay published.</em></span></li>
+        <li><span class="x">✕</span><span><b>Voice AI answering the main line.</b> The voice IS the product; projected cost is repeat-booking erosion. T1/T5 capture the value without answering as Justin. <em>Reopen: only for a separate overflow line, clearly not-Justin.</em></span></li>
+        <li><span class="x">✕</span><span><b>Backhaul marketplace.</b> A 3-vehicle fleet has no liquidity. V2&rsquo;s standing contracts are the tractable version. <em>Reopen: at 10+ vehicles or a real operator coalition.</em></span></li>
+        <li><span class="x">✕</span><span><b>Shared per-seat AVL shuttle.</b> Breaks the word &ldquo;private&rdquo; in the value proposition. <em>Reopen: as a separate brand, AVL corridor only.</em></span></li>
+        <li><span class="x">✕</span><span><b>Dashcam scenic reels for clients.</b> Consent and privacy problem in a business built on discretion. <em>Reopen: opt-in only, if clients ask for it.</em></span></li>
+        <li><span class="x">✕</span><span><b>Predictive staffing.</b> 1099 status legally cannot compel held availability. <em>Reopen: if the driver model changes.</em></span></li>
+        <li><span class="x">✕</span><span><b>Programmatic SEO at scale.</b> Thin-content penalty risk on a 10-post domain. M6&rsquo;s hand-approved seasonal pages are the safe version. <em>Reopen: page-by-page, never as a flood.</em></span></li>
+        <li><span class="x">✕</span><span><b>Fleet digital twin / OBD maintenance prediction.</b> Real, but three vehicles don&rsquo;t amortize it; a maintenance calendar does 90% of the job. <em>Reopen: at vehicle #5.</em></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    WNC Shuttle · Phase 3: Organization &amp; Scope · draft for review · 10 July 2026<br>
+    118 raw → 41 consolidated → 5 groups → 3 tiers → 8 parked · lineage preserved in the <a href="ideas.html">brainstorm archive</a>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var btns=document.querySelectorAll('#effortFilter .fbtn');
+  var cards=document.querySelectorAll('.card');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      btns.forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var e=b.getAttribute('data-e');
+      cards.forEach(function(c){
+        if(e==='all'||c.getAttribute('data-e')===e){c.classList.remove('hidden');}
+        else{c.classList.add('hidden');}
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
