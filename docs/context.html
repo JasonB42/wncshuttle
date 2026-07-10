@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WNC Shuttle — Context &amp; Research</title>
+<style>
+  :root{
+    --ink:#e9e4d6;
+    --ink-soft:#b8b3a2;
+    --ink-faint:#7f8a7e;
+    --paper:#0c1512;
+    --paper-2:#111e18;
+    --panel:#132420;
+    --panel-2:#17302a;
+    --line:#26433a;
+    --line-soft:#1d352e;
+    --ever:#1f5140;
+    --ever-bright:#3c8a6c;
+    --slate:#5b7488;
+    --amber:#e2a24a;
+    --amber-bright:#f4c069;
+    --fog:#9fb4ac;
+    --danger:#d76a4c;
+    --danger-2:#e88a5f;
+    --shadow:0 18px 40px -20px rgba(0,0,0,.75);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,ui-serif,serif;
+  }
+  *{box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 78% -8%, rgba(46,110,88,.18), transparent 60%),
+      radial-gradient(900px 500px at 10% 8%, rgba(91,116,136,.12), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.62;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+  .wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 20px 120px}
+  h1,h2,h3,h4{font-family:var(--sans);line-height:1.12;letter-spacing:-.01em;font-weight:700}
+  a{color:var(--amber-bright);text-decoration:none}
+  .mono{font-family:var(--mono)}
+  .up{font-family:var(--sans);text-transform:uppercase;letter-spacing:.22em;font-size:.66rem;font-weight:700}
+
+  header.masthead{padding:64px 0 30px}
+  .kicker{color:var(--amber);letter-spacing:.34em;font-size:.62rem}
+  .masthead h1{
+    font-size:clamp(1.9rem,5.4vw,3.4rem);
+    margin:.35em 0 .1em;
+    background:linear-gradient(180deg,#f3ecda,#c6bfa8);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tagline{font-family:var(--serif);font-style:italic;color:var(--fog);font-size:clamp(1rem,2.4vw,1.25rem);margin:0 0 4px}
+  .tagline b{color:var(--amber-bright);font-style:normal;font-weight:600}
+  .metaline{color:var(--ink-faint);font-family:var(--mono);font-size:.78rem;margin-top:10px;letter-spacing:.02em}
+
+  /* legend */
+  .legend{margin-top:30px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(19,36,32,.86),rgba(12,21,18,.86));padding:16px 18px}
+  .legend .up{color:var(--amber)}
+  .legend p{margin:8px 0 12px;color:var(--ink-soft);font-size:.9rem}
+  .lgrid{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--sans);font-size:.78rem;color:var(--ink-soft)}
+  .lgrid span{display:inline-flex;align-items:center;gap:7px}
+
+  /* confidence chips */
+  .cf{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;padding:2px 7px;border-radius:5px;border:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+  .cf.obs{color:#9fc9b6;border-color:rgba(60,138,108,.55);background:rgba(31,81,64,.22)}
+  .cf.inf{color:var(--amber-bright);border-color:rgba(226,162,74,.5);background:rgba(226,162,74,.1)}
+  .cf.asm{color:var(--danger-2);border-color:rgba(215,106,76,.5);background:rgba(215,106,76,.1)}
+
+  section{margin-top:64px;scroll-margin-top:20px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:24px}
+  .sec-num{font-family:var(--mono);color:var(--amber);font-size:.8rem;letter-spacing:.1em;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+  .sec-head h2{font-size:clamp(1.4rem,3.6vw,2rem);margin:0}
+  .sec-head .sub{color:var(--fog);font-style:italic;font-family:var(--serif);flex-basis:100%;font-size:1rem;margin-top:2px}
+  .lead{color:var(--ink-soft);max-width:66ch;margin:0 0 24px}
+
+  /* fact list */
+  .facts{display:grid;gap:10px}
+  .fact{border:1px solid var(--line-soft);border-radius:10px;padding:13px 16px;background:rgba(17,30,24,.5);display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+  .fact p{margin:0;font-size:.93rem;color:var(--ink-soft)}
+  .fact p b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  /* fleet cards */
+  .fleet{display:grid;gap:16px}
+  @media(min-width:760px){.fleet{grid-template-columns:1fr 1fr 1fr}}
+  .veh{border:1px solid var(--line);border-radius:14px;padding:20px 18px;background:linear-gradient(180deg,rgba(23,48,42,.55),rgba(12,21,18,.7))}
+  .veh .vt{font-family:var(--mono);font-size:.62rem;color:var(--amber);letter-spacing:.14em}
+  .veh h3{font-size:1.05rem;margin:6px 0 8px}
+  .veh p{margin:0;font-size:.87rem;color:var(--ink-soft)}
+
+  /* two-col panels */
+  .duo{display:grid;gap:18px}
+  @media(min-width:820px){.duo{grid-template-columns:1fr 1fr}}
+  .panelbox{border:1px solid var(--line);border-radius:14px;padding:20px 18px;background:var(--panel)}
+  .panelbox h3{font-size:1rem;margin:0 0 12px;color:var(--amber-bright)}
+  .panelbox ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .panelbox li{font-size:.9rem;line-height:1.5;padding-left:18px;position:relative;color:var(--ink-soft)}
+  .panelbox li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:2px;transform:rotate(45deg);background:var(--ever-bright)}
+  .panelbox.warn li::before{background:var(--danger)}
+  .panelbox li b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  /* insight strip */
+  .synth-note{margin-top:26px;border-left:3px solid var(--amber);background:linear-gradient(90deg,rgba(226,162,74,.08),transparent);padding:14px 18px;border-radius:0 10px 10px 0}
+  .synth-note .up{color:var(--amber)}
+  .synth-note p{margin:6px 0 0;color:var(--ink);font-size:.96rem}
+
+  /* open questions */
+  .oq{border:1px dashed var(--danger);border-radius:14px;background:#100f0b;padding:8px 4px}
+  .oq-head{font-family:var(--mono);color:var(--danger-2);font-size:.82rem;padding:14px 18px 6px;letter-spacing:.04em}
+  .oq ul{list-style:none;margin:0;padding:0}
+  .oq li{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:13px 18px;border-top:1px solid #1d1913;font-size:.92rem;color:var(--ink-soft)}
+  .oq li .q{font-family:var(--sans);font-weight:800;color:var(--danger-2);font-size:.8rem;margin-top:2px}
+  .oq li b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  footer{margin-top:80px;text-align:center;color:var(--ink-faint);font-size:.72rem;font-family:var(--mono);border-top:1px solid var(--line-soft);padding-top:28px}
+</style>
+</head>
+<body>
+
+<svg class="topo" viewBox="0 0 1200 1600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <g fill="none" stroke="#274a3f" stroke-width="1.1" opacity="0.55">
+    <path d="M-50,220 C220,120 460,300 700,210 C920,128 1080,300 1260,240"/>
+    <path d="M-50,300 C220,200 470,380 700,290 C930,208 1080,380 1260,320"/>
+    <path d="M-50,380 C220,290 480,460 700,370 C940,290 1085,460 1260,400"/>
+    <path d="M-50,470 C230,380 480,540 700,460 C940,382 1090,540 1260,490"/>
+    <path d="M-50,600 C240,520 470,660 700,600 C930,545 1090,660 1260,620"/>
+    <path d="M-50,760 C240,690 470,820 700,770 C930,725 1090,820 1260,790"/>
+    <path d="M-50,940 C240,870 470,1000 700,950 C930,905 1090,1000 1260,970"/>
+    <path d="M-50,1140 C240,1070 470,1200 700,1150 C930,1105 1090,1200 1260,1170"/>
+    <path d="M-50,1340 C240,1270 470,1400 700,1350 C930,1305 1090,1400 1260,1370"/>
+  </g>
+  <g fill="none" stroke="#3a6a58" stroke-width="1.4" stroke-dasharray="2 9" opacity="0.5" stroke-linecap="round">
+    <path d="M120,1500 C260,1200 180,980 360,760 C520,560 460,360 620,180 C740,60 720,-40 900,-120"/>
+  </g>
+</svg>
+
+<div class="wrap">
+
+  <nav style="padding-top:28px;font-family:var(--mono);font-size:.78rem">
+    <a href="index.html">&larr; Project Index</a>
+    <span style="color:var(--ink-faint)"> &nbsp;·&nbsp; </span>
+    <a href="ideas.html">Brainstorm Archive</a>
+  </nav>
+
+  <!-- ============ HEADER ============ -->
+  <header class="masthead">
+    <div class="kicker mono">PHASE 1 · CONTEXT &amp; RESEARCH DOSSIER</div>
+    <h1>What We Know<br>About WNC Shuttle</h1>
+    <p class="tagline">The company, the fleet, the terrain, the tools — and the line between what we&rsquo;ve <b>verified</b> and what we&rsquo;re <b>assuming</b>.</p>
+    <div class="metaline">Compiled 10 July 2026 · sources: wncshuttle.com website &amp; blog, FAQ page, Facebook page, and the Phase 2 brainstorm session log</div>
+
+    <div class="legend">
+      <div class="up">How to read the confidence tags</div>
+      <p>Every fact below carries a tag. Nothing marked <span class="mono">ASSUMED</span> should drive a build decision until Justin confirms it.</p>
+      <div class="lgrid">
+        <span><span class="cf obs">OBSERVED</span> seen directly on the public website, blog, FAQ, or Facebook</span>
+        <span><span class="cf inf">INFERRED</span> a reasoned conclusion from observed facts — probably right, worth confirming</span>
+        <span><span class="cf asm">ASSUMED</span> plausible but unverified — treat as a question, not a fact</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 1. COMPANY ============ -->
+  <section id="company">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>The Company</h2>
+      <div class="sub">Family-owned private transportation into the parts of Western North Carolina other services refuse.</div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><p><b>WNC Shuttle</b> is a family-owned private transportation company based in <b>Waynesville, North Carolina</b>, operated by <b>Justin</b>.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>The brand promise is the tagline: <b>&ldquo;We go where others won&rsquo;t&hellip; or can&rsquo;t.&rdquo;</b> The differentiator is reaching remote, unpaved, steep, or seasonal roads in the Blue Ridge that ride-share and ordinary car services cannot.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>Primary contact channel is the phone line, <span class="mono">(828) 400-3987</span> — calls and texts answered personally. The personal voice is core to the brand (&ldquo;family-owned, talk to a real person&rdquo;).</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>Positioning is deliberately anti-Uber: fixed published pricing factors, <b>no rate negotiation</b>, no surge, personal service, discretion.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>Service rules from the FAQ: <b>no pets</b>, <b>no limo-style service</b>, and no wheelchair-accessible vehicle — these inquiries must currently be declined by hand.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>The business is capacity-bound by one human&rsquo;s calendar — it closed entirely over a holiday for a family event. Justin&rsquo;s attention is the scarce resource.</p><span class="cf inf">INFERRED</span></div>
+      <div class="fact"><p>The real moat is not the vehicles — it is <b>undocumented road knowledge</b>: which roads each vehicle can survive, by season and weather. Today that knowledge lives in one head.</p><span class="cf inf">INFERRED</span></div>
+      <div class="fact"><p>Revenue mix by trip type (airport vs. trailhead vs. casino vs. wedding) is <b>not precisely known</b> — even, we suspect, to Justin.</p><span class="cf asm">ASSUMED</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 2. FLEET ============ -->
+  <section id="fleet">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>The Fleet</h2>
+      <div class="sub">Three vehicles, each with a different job. <span class="cf obs">OBSERVED</span></div>
+    </div>
+
+    <div class="fleet">
+      <div class="veh">
+        <div class="vt">4X4 · ROUGH ROAD</div>
+        <h3>Ford F-150 Platinum</h3>
+        <p>The &ldquo;where others can&rsquo;t&rdquo; vehicle — trailhead drops, unpaved and seasonal roads, remote cabin access.</p>
+      </div>
+      <div class="veh">
+        <div class="vt">PREMIUM · COMFORT</div>
+        <h3>Lincoln Navigator</h3>
+        <p>The premium ride — airport runs, casino trips, weddings, clients paying for comfort and discretion.</p>
+      </div>
+      <div class="veh">
+        <div class="vt">CAPACITY · GROUPS</div>
+        <h3>Ford Transit</h3>
+        <p>The group mover — wedding parties, larger airport groups; the six-seat cabin that most often runs with one passenger.</p>
+      </div>
+    </div>
+
+    <div class="facts" style="margin-top:16px">
+      <div class="fact"><p>Drivers beyond Justin are <b>1099 contractors</b> — availability cannot legally be compelled, and onboarding a new driver is slow (an insurance-focused blog post suggests he has been recruiting for years).</p><span class="cf inf">INFERRED</span></div>
+      <div class="fact"><p>Vehicle-role assignments above (which vehicle does which job) are our reading of the positioning, not a stated policy.</p><span class="cf asm">ASSUMED</span></div>
+      <div class="fact"><p>Future-facing note from the session: the plan is <b>not</b> to grow the fleet — growth comes from the referral network and better utilization of the three vehicles that exist.</p><span class="cf inf">INFERRED</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. SERVICE AREA & DEMAND ============ -->
+  <section id="demand">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>Service Area &amp; Demand Sources</h2>
+      <div class="sub">Where the trips come from, and when.</div>
+    </div>
+
+    <div class="duo">
+      <div class="panelbox">
+        <h3>Demand sources</h3>
+        <ul>
+          <li><b>Asheville Regional Airport (AVL)</b> runs — including recurring 5am departures; likely the volume backbone. <span class="cf inf">INFERRED</span></li>
+          <li><b>Trailhead drops &amp; pickups</b> — hikers into the remote Blue Ridge (Cataloochee and similar); the signature &ldquo;we go where others won&rsquo;t&rdquo; trips. <span class="cf obs">OBSERVED</span></li>
+          <li><b>Harrah&rsquo;s Cherokee casino</b> trips. <span class="cf obs">OBSERVED</span></li>
+          <li><b>Weddings</b> — venues around Maggie Valley; group shuttle logistics. <span class="cf inf">INFERRED</span></li>
+          <li><b>Cabin-rental guests</b> (VRBO/Airbnb) staying at remote properties. <span class="cf inf">INFERRED</span></li>
+          <li><b>Anglers</b> — fly-fishing access to remote water (Pigeon River corridor). <span class="cf asm">ASSUMED</span></li>
+        </ul>
+      </div>
+      <div class="panelbox">
+        <h3>Seasonality &amp; events</h3>
+        <ul>
+          <li><b>Leaf season</b> (fall) is peak demand. <span class="cf inf">INFERRED</span></li>
+          <li><b>Cataloochee ski season</b> (winter) brings its own traffic and road risk. <span class="cf inf">INFERRED</span></li>
+          <li><b>Apple Festival</b> and the WNC festival calendar drive spikes — a past 10%-off-hourly festival promotion worked but was never systematized. <span class="cf obs">OBSERVED</span></li>
+          <li>Demand is <b>lumpy</b> against fixed capacity — so the economic enemy is deadhead miles and idle hours, not customer count. <span class="cf inf">INFERRED</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="duo" style="margin-top:18px">
+      <div class="panelbox warn">
+        <h3>Terrain constraints (hard requirements for any software)</h3>
+        <ul>
+          <li><b>Cell coverage is absent</b> across much of the service area — anything driver-facing must work fully offline and sync later. <span class="cf obs">OBSERVED</span></li>
+          <li><b>Google ETAs are badly wrong</b> on mountain roads (a last mile can take 22 minutes, not Google&rsquo;s 8) — a proprietary travel-time model is a potential moat. <span class="cf inf">INFERRED</span></li>
+          <li>Road passability varies by <b>vehicle, season, and weather</b> — ice, fog, downed trees; a wrong acceptance isn&rsquo;t a bad review, it can be a rescue. <span class="cf inf">INFERRED</span></li>
+          <li>The Blue Ridge Parkway <b>closes at dusk</b> seasonally and routes must adapt (e.g. take NC-276 instead). <span class="cf asm">ASSUMED</span></li>
+        </ul>
+      </div>
+      <div class="panelbox">
+        <h3>Partner ecosystem (mapped in Phase 2)</h3>
+        <ul>
+          <li>Cabin hosts — touch the guest months before Justin can. <span class="cf inf">INFERRED</span></li>
+          <li>Harrah&rsquo;s Cherokee concierge — potential standing &ldquo;safe ride home&rdquo; arrangement. <span class="cf asm">ASSUMED</span></li>
+          <li>Fly-fishing guides &amp; outfitters — symbionts, not competitors. <span class="cf asm">ASSUMED</span></li>
+          <li>Wedding coordinators in Maggie Valley. <span class="cf asm">ASSUMED</span></li>
+          <li>Neighboring operators (Bryson City, Franklin) for out-of-range trips. <span class="cf asm">ASSUMED</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. TECH STACK ============ -->
+  <section id="stack">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>Current Tech Stack &amp; Tooling</h2>
+      <div class="sub">What exists today — the raw material every idea has to plug into.</div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><p><b>bookingtool.net</b> is the paid booking system. It holds the customer and trip data — <b>platform lock-in is the biggest silent risk</b>; export/API capability is unverified.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p><b>WordPress website</b> with <b>GA4</b> and <b>AIOSEO</b> already installed. An FAQ page that is unusually thorough (pricing factors, service rules) — the best grounding corpus the company owns.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p><b>Blog</b>: 10 posts, dormant since roughly 2022, with a note that the &ldquo;blog has moved to Facebook.&rdquo; Content died from lack of a distribution loop, not lack of quality — the April Fools &ldquo;Hyper-Express&rdquo; post shows a real authorial voice.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p><b>Facebook</b> is the active marketing channel — a rented channel; posts get engagement (40 likes) but no bookings because they carry no link and no offer.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p><b>Stripe</b> is in place for payments.</p><span class="cf inf">INFERRED</span></div>
+      <div class="fact"><p><b>Google Calendar</b> is (we believe) the de facto schedule, and some form of <b>internal flight tracking</b> already exists for airport runs.</p><span class="cf asm">ASSUMED</span></div>
+      <div class="fact"><p>Justin is currently <b>exploring Zapier</b> to relieve the rekeying pain — the same trip typed into the booking tool, calendar, email, and invoice. The session&rsquo;s verdict: right instinct, wrong layer; the real need is <b>single-entry</b> via one canonical trip record.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>There is <b>no CRM</b>. Repeat-customer knowledge lives in Justin&rsquo;s head. Quotes that never convert are not tracked anywhere — the lost-quote log is the most valuable dataset not being collected.</p><span class="cf inf">INFERRED</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 5. OPERATIONS ============ -->
+  <section id="ops">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>How the Operation Actually Runs</h2>
+      <div class="sub">The workflow from inquiry to payment, as we currently understand it.</div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><p>Inquiries arrive by <b>phone, text, email, voicemail, and the booking tool</b>. After-hours inquiries wait until morning — and some callers book a competitor within minutes (the 11pm voicemail answered at 8am).</p><span class="cf inf">INFERRED</span></div>
+      <div class="fact"><p>Justin <b>personally gates every confirmation</b> — a roughly 30-second check per booking. What he verifies in those 30 seconds (vehicle fit, road passability, schedule fit, client trust) is the <b>undocumented core business logic</b> of the company. The gate is a safety system, not friction.</p><span class="cf inf">INFERRED</span></div>
+      <div class="fact"><p>The same trip is <b>rekeyed</b> into multiple systems: booking tool, calendar, confirmation email, invoice. This is the pain that sent him toward Zapier.</p><span class="cf obs">OBSERVED</span></div>
+      <div class="fact"><p>Trips are not instrumented: no log of actual vs. predicted travel time, no record of refused rides, no record of why quotes were lost.</p><span class="cf asm">ASSUMED</span></div>
+      <div class="fact"><p>Confirmation emails are written <b>by hand</b>, often with route-specific local color — a quality worth preserving in any automation.</p><span class="cf asm">ASSUMED</span></div>
+    </div>
+
+    <div class="synth-note">
+      <div class="up">The two metrics that move money</div>
+      <p><b>Round-trip attach rate</b> (kill the deadhead mile at quote time) and <b>admin-hours-removed</b> (every admin hour automated becomes sellable capacity). Both come straight out of the Phase 2 synthesis and shape how Phase 3 will score ideas.</p>
+    </div>
+  </section>
+
+  <!-- ============ 6. WORKING PRINCIPLES ============ -->
+  <section id="principles">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2>Working Principles Carried Into Phase 3</h2>
+      <div class="sub">Session-derived rules that constrain every idea we evaluate.</div>
+    </div>
+
+    <div class="duo">
+      <div class="panelbox">
+        <h3>Design principles</h3>
+        <ul>
+          <li><b>Data before intelligence.</b> The trip log, lost-quote log, and refused-ride log are free to start and every AI idea depends on them.</li>
+          <li><b>Single-entry.</b> One canonical trip object every downstream system reads and writes. Design the schema before buying the glue.</li>
+          <li><b>The autonomy ladder.</b> Every feature ships as draft-for-human, graduates to human-approves after 50 correct drafts, and only ever reaches autonomous for reversible or strictly grounded actions.</li>
+          <li><b>Buy back attention, or productize knowledge.</b> Every idea must do one of the two — that is the filter.</li>
+        </ul>
+      </div>
+      <div class="panelbox warn">
+        <h3>Red lines</h3>
+        <ul>
+          <li><b>The confirmation gate stays human.</b> AI may pre-clear the easy 80% and escalate the rest — it may not book unsupervised.</li>
+          <li><b>No AI on the main phone line.</b> The personal voice is the product; the projected cost of automating it is repeat-booking erosion.</li>
+          <li><b>No surge or dynamic pricing.</b> It collides head-on with &ldquo;we do not negotiate rates.&rdquo;</li>
+          <li><b>Reliability beats cleverness.</b> Every automation is a system Justin must debug at 4am before an airport run.</li>
+          <li><b>Offline-first</b> for anything used in the field.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. OPEN QUESTIONS ============ -->
+  <section id="questions">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <h2>Open Questions to Verify with Justin</h2>
+      <div class="sub">The assumptions above, converted into the interview list. Answers here will re-rank the ideas in Phase 3.</div>
+    </div>
+
+    <div class="oq">
+      <div class="oq-head"># verify-before-building.txt</div>
+      <ul>
+        <li><span class="q">Q1</span><span><b>Booking volume &amp; mix.</b> Trips per week by type (airport / trailhead / casino / wedding / other), and how it swings by season?</span></li>
+        <li><span class="q">Q2</span><span><b>The 30-second check.</b> Walk through the last ten confirmations — what exactly was checked, and what would have made you decline?</span></li>
+        <li><span class="q">Q3</span><span><b>bookingtool.net exit ramp.</b> Does it offer CSV export, webhooks, or an API? Who owns the customer records contractually?</span></li>
+        <li><span class="q">Q4</span><span><b>Quote funnel.</b> How many quotes go out per week, how many convert, and does anything record the ones that don&rsquo;t?</span></li>
+        <li><span class="q">Q5</span><span><b>Drivers.</b> How many active 1099 drivers today, which vehicles/roads is each trusted on, and how long did the last onboarding take?</span></li>
+        <li><span class="q">Q6</span><span><b>Tool reality check.</b> Is Google Calendar actually the schedule of record? Is Stripe used on every trip or only some? Is Zapier already connected to anything?</span></li>
+        <li><span class="q">Q7</span><span><b>Refused &amp; missed demand.</b> Roughly how often do you decline a trip (wrong vehicle, too far, booked solid), and where do those callers go?</span></li>
+        <li><span class="q">Q8</span><span><b>The road knowledge.</b> Would you sit for a recorded 30-minute interview about mountain roads — and are you comfortable with that becoming structured data?</span></li>
+        <li><span class="q">Q9</span><span><b>Round trips.</b> What share of airport runs today are booked as round trips, and is a return-leg discount ever offered at quote time?</span></li>
+        <li><span class="q">Q10</span><span><b>Partners.</b> Which cabin hosts, venues, or guides already refer you informally — and who would you never want to be contractually tied to?</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    WNC Shuttle · Context &amp; Research Dossier · compiled 10 July 2026 · confidence-tagged: OBSERVED / INFERRED / ASSUMED<br>
+    Sources: wncshuttle.com, site FAQ &amp; blog archive, Facebook page, Phase 2 brainstorm session log (<span class="mono">_bmad-output/brainstorming/brainstorm-wncshuttle-tech-ai-2026-07-10</span>)
+  </footer>
+
+</div>
+</body>
+</html>
