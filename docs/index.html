@@ -65,7 +65,7 @@
   .rail{margin-top:40px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(19,36,32,.86),rgba(12,21,18,.86));box-shadow:var(--shadow);overflow:hidden}
   .rail .rh{padding:14px 18px 0;color:var(--amber)}
   .steps{display:grid;grid-template-columns:1fr;padding:14px 8px 16px}
-  @media(min-width:760px){.steps{grid-template-columns:repeat(4,1fr)}}
+  @media(min-width:760px){.steps{grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}}
   .step{padding:12px 12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
   .step .pin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-weight:800;font-size:.72rem;flex:none;margin-top:2px}
   .step.done .pin{background:var(--ever-bright);color:#07130f}
@@ -179,8 +179,16 @@
         <div class="step later">
           <span class="pin">4</span>
           <div>
-            <div class="st">Phase 4 — Build</div>
-            <div class="sd">Specs, prototypes, and shipping the first one or two winners.</div>
+            <div class="st">Phase 4 — Winners &amp; Design</div>
+            <div class="sd">Select the first winners from the narrowed field, then design each one deeply for the biggest win.</div>
+            <span class="tag">AFTER P3 REVIEW</span>
+          </div>
+        </div>
+        <div class="step later">
+          <span class="pin">5</span>
+          <div>
+            <div class="st">Phase 5 — Build</div>
+            <div class="sd">Specs, prototypes, and shipping the designed winners.</div>
             <span class="tag">LATER</span>
           </div>
         </div>
@@ -220,11 +228,19 @@
         <div class="badges"><span class="bdg">41 candidates</span><span class="bdg">5 groups</span><span class="bdg">3 tiers</span><span class="bdg">draft for review</span></div>
         <span class="go">See the narrowed field →</span>
       </a>
+
+      <div class="doc pending">
+        <div class="dn">04 · WINNERS &amp; DESIGN</div>
+        <h3>Phase 4: First Winners, Designed Deep</h3>
+        <p>Coming after the Phase 3 review — the first winners are selected from the narrowed field, then each gets a design deep-dive: the mechanism, the data it needs, the metric it moves, and the design choices that turn a good idea into the biggest win.</p>
+        <div class="badges"><span class="bdg">awaiting winner selection</span></div>
+        <span class="go">Not yet written&hellip;</span>
+      </div>
     </div>
 
     <div class="orient">
       <div class="up">How to read this project</div>
-      <p>Start with <a href="context.html">Context &amp; Research</a> to load what we know — and, just as important, what we&rsquo;re only assuming. Then skim the <a href="ideas.html">brainstorm archive</a> for the flavor of the raw field. Phase 3 will do the sorting; the archive stays untouched as the record of where every idea came from.</p>
+      <p>Start with <a href="context.html">Context &amp; Research</a> to load what we know — and, just as important, what we&rsquo;re only assuming. Skim the <a href="ideas.html">brainstorm archive</a> for the flavor of the raw field, then read the <a href="phase3.html">narrowed field</a> for the organized version. Phase 4 selects the first winners from it and designs each one deeply; the archive stays untouched as the record of where every idea came from.</p>
       <p>Source material: the brainstorm session&rsquo;s full log lives in the repo at <span class="mono">_bmad-output/brainstorming/brainstorm-wncshuttle-tech-ai-2026-07-10/</span>.</p>
     </div>
   </section>
