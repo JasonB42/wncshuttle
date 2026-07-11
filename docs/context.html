@@ -42,7 +42,7 @@
     font-size:17px;
     -webkit-font-smoothing:antialiased;
   }
-  .topo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+  .topo{position:fixed;top:0;left:0;width:100%;height:170vh;z-index:0;pointer-events:none;opacity:.62;will-change:transform}
   .wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 20px 120px}
   h1,h2,h3,h4{font-family:var(--sans);line-height:1.12;letter-spacing:-.01em;font-weight:700}
   a{color:var(--amber-bright);text-decoration:none}
@@ -378,5 +378,25 @@
   </footer>
 
 </div>
+<script>
+(function(){
+  var topo=document.querySelector('.topo');
+  if(!topo)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var ticking=false;
+  function move(){
+    ticking=false;
+    var doc=document.documentElement;
+    var max=doc.scrollHeight-window.innerHeight;
+    var slack=topo.getBoundingClientRect().height-window.innerHeight;
+    if(max>0&&slack>0){
+      topo.style.transform='translateY(-'+(window.scrollY/max*slack).toFixed(1)+'px)';
+    }
+  }
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(move);}},{passive:true});
+  window.addEventListener('resize',move);
+  move();
+})();
+</script>
 </body>
 </html>
