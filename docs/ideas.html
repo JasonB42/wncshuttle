@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WNC Shuttle — Brainstorm Field Notes (Raw Ideas)</title>
+<style>
+  :root{
+    --ink:#e9e4d6;
+    --ink-soft:#b8b3a2;
+    --ink-faint:#7f8a7e;
+    --paper:#0c1512;
+    --paper-2:#111e18;
+    --panel:#132420;
+    --panel-2:#17302a;
+    --line:#26433a;
+    --line-soft:#1d352e;
+    --ever:#1f5140;
+    --ever-bright:#3c8a6c;
+    --slate:#5b7488;
+    --amber:#e2a24a;
+    --amber-bright:#f4c069;
+    --fog:#9fb4ac;
+    --danger:#d76a4c;
+    --danger-2:#e88a5f;
+    --shadow:0 18px 40px -20px rgba(0,0,0,.75);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,ui-serif,serif;
+  }
+  *{box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 78% -8%, rgba(46,110,88,.18), transparent 60%),
+      radial-gradient(900px 500px at 10% 8%, rgba(91,116,136,.12), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.62;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* fixed topographic backdrop */
+  .topo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 120px}
+  h1,h2,h3,h4{font-family:var(--sans);line-height:1.12;letter-spacing:-.01em;font-weight:700}
+  a{color:var(--amber-bright);text-decoration:none}
+  .mono{font-family:var(--mono)}
+  .up{font-family:var(--sans);text-transform:uppercase;letter-spacing:.22em;font-size:.66rem;font-weight:700}
+
+  /* ---------- HEADER ---------- */
+  header.masthead{padding:64px 0 34px;position:relative}
+  .kicker{color:var(--amber);letter-spacing:.34em;font-size:.62rem}
+  .masthead h1{
+    font-size:clamp(2.1rem,6.2vw,4.1rem);
+    margin:.35em 0 .1em;
+    background:linear-gradient(180deg,#f3ecda,#c6bfa8);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tagline{font-family:var(--serif);font-style:italic;color:var(--fog);font-size:clamp(1rem,2.6vw,1.35rem);margin:0 0 4px}
+  .tagline b{color:var(--amber-bright);font-style:normal;font-weight:600}
+  .metaline{color:var(--ink-faint);font-family:var(--mono);font-size:.78rem;margin-top:10px;letter-spacing:.02em}
+  .metacard{
+    margin-top:26px;border:1px solid var(--line);border-radius:14px;
+    background:linear-gradient(180deg,rgba(19,36,32,.86),rgba(12,21,18,.86));
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .metacard .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .metacard .cell{padding:16px 18px;border-right:1px solid var(--line-soft);border-top:1px solid var(--line-soft)}
+  .metacard .cell:first-child{border-top:none}
+  .metacard .cell .lab{color:var(--amber);letter-spacing:.16em}
+  .metacard .cell .val{font-family:var(--sans);font-size:.95rem;margin-top:4px;color:var(--ink)}
+  .metacard .obj{padding:16px 18px;border-top:1px solid var(--line-soft);color:var(--ink-soft);font-size:.95rem}
+  .metacard .obj b{color:var(--ink);font-family:var(--sans);font-weight:600}
+  .countbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:10px 15px;background:rgba(17,30,24,.6)}
+  .stat .n{font-family:var(--sans);font-weight:800;font-size:1.5rem;color:var(--amber-bright);line-height:1}
+  .stat .t{font-size:.62rem;color:var(--ink-faint);margin-top:5px}
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  section{margin-top:76px;scroll-margin-top:20px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:26px}
+  .sec-num{font-family:var(--mono);color:var(--amber);font-size:.8rem;letter-spacing:.1em;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+  .sec-head h2{font-size:clamp(1.5rem,4vw,2.3rem);margin:0}
+  .sec-head .sub{color:var(--fog);font-style:italic;font-family:var(--serif);flex-basis:100%;font-size:1rem;margin-top:2px}
+  .lead{color:var(--ink-soft);max-width:64ch;margin:0 0 28px}
+
+  /* ---------- 1. DISNEY ---------- */
+  .disney{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:860px){.disney{grid-template-columns:1fr 1fr 1fr}}
+  .room{border-radius:14px;padding:20px 18px;border:1px solid var(--line);position:relative;overflow:hidden}
+  .room h3{font-size:1.02rem;margin:0 0 3px;display:flex;align-items:center;gap:9px}
+  .room .room-sub{font-size:.72rem;color:var(--ink-faint);margin:0 0 16px;font-family:var(--sans);letter-spacing:.04em}
+  .room ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+  .room li{font-size:.92rem;line-height:1.5;padding-left:18px;position:relative;color:var(--ink-soft)}
+  .room li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:2px;transform:rotate(45deg)}
+  .room .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .dreamer{background:radial-gradient(120% 90% at 30% 0%,rgba(226,162,74,.14),transparent 60%),var(--panel)}
+  .dreamer .dot{background:var(--amber-bright);box-shadow:0 0 14px var(--amber)}
+  .dreamer li::before{background:var(--amber)}
+  .realist{background:radial-gradient(120% 90% at 30% 0%,rgba(91,116,136,.16),transparent 60%),var(--panel)}
+  .realist .dot{background:var(--slate);box-shadow:0 0 12px rgba(91,116,136,.7)}
+  .realist li::before{background:var(--slate)}
+  .critic{background:repeating-linear-gradient(135deg,rgba(215,106,76,.07) 0 12px,transparent 12px 24px),var(--panel)}
+  .critic{border-color:rgba(215,106,76,.4)}
+  .critic .dot{background:var(--danger);box-shadow:0 0 12px rgba(215,106,76,.7)}
+  .critic li{color:#e7cabb}
+  .critic li::before{content:"!";background:none;transform:none;color:var(--danger-2);font-family:var(--sans);font-weight:800;font-size:.8rem;top:.05em;left:2px;width:auto;height:auto}
+  .room-hazard{position:absolute;top:0;left:0;right:0;height:4px;background:repeating-linear-gradient(90deg,var(--danger) 0 14px,#12201c 14px 28px)}
+
+  /* synthesis note shared */
+  .synth-note{margin-top:22px;border-left:3px solid var(--amber);background:linear-gradient(90deg,rgba(226,162,74,.08),transparent);padding:14px 18px;border-radius:0 10px 10px 0}
+  .synth-note .up{color:var(--amber)}
+  .synth-note p{margin:6px 0 0;color:var(--ink);font-size:.98rem}
+
+  /* ---------- 2. TIME TRAVEL ---------- */
+  .talkshow{position:relative}
+  .era{display:grid;grid-template-columns:auto 1fr;gap:18px;position:relative;padding:0 0 8px}
+  .era-rail{display:flex;flex-direction:column;align-items:center}
+  .era-year{font-family:var(--sans);font-weight:800;font-size:1.05rem;color:var(--paper);background:var(--amber);border-radius:8px;padding:6px 10px;white-space:nowrap;box-shadow:0 0 18px rgba(226,162,74,.35)}
+  .era-2022 .era-year{background:var(--slate);box-shadow:none;color:#0c1512}
+  .era-2030 .era-year{background:var(--ever-bright);box-shadow:0 0 18px rgba(60,138,108,.4);color:#07130f}
+  .era-line{flex:1;width:2px;background:linear-gradient(var(--line),transparent);margin-top:8px;min-height:24px}
+  .era-body{padding-bottom:34px}
+  .era-body .who{font-family:var(--sans);font-weight:700;font-size:1.1rem;margin-bottom:2px}
+  .era-body .role{color:var(--ink-faint);font-size:.72rem;font-family:var(--sans);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+  .transcript{display:grid;gap:12px}
+  .qa{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;border:1px solid var(--line-soft);border-radius:10px;padding:12px 14px;background:rgba(17,30,24,.5)}
+  .qa .mk{font-family:var(--mono);font-size:.68rem;color:var(--amber);border:1px solid var(--line);border-radius:5px;padding:3px 6px;white-space:nowrap;margin-top:2px}
+  .era-2030 .qa .mk{color:var(--ever-bright)}
+  .era-2022 .qa .mk{color:var(--slate)}
+  .qa p{margin:0;font-size:.93rem;color:var(--ink-soft)}
+  .qa.warn{border-color:rgba(215,106,76,.45)}
+  .qa.warn .mk{color:var(--danger-2);border-color:rgba(215,106,76,.4)}
+
+  /* ---------- 3. EMPTY SEAT ---------- */
+  .stage{background:
+    radial-gradient(900px 300px at 50% -10%,rgba(226,162,74,.12),transparent 60%),
+    linear-gradient(180deg,#0a1310,#0c1713);
+    border:1px solid var(--line);border-radius:18px;padding:30px 20px 34px;position:relative}
+  .stage::before{content:"THE EMPTY SEAT INTERVIEW";position:absolute;top:12px;left:50%;transform:translateX(-50%);font-family:var(--sans);letter-spacing:.4em;font-size:.55rem;color:var(--amber);opacity:.7;white-space:nowrap}
+  .spotlight{text-align:center;color:var(--ink-faint);font-style:italic;max-width:60ch;margin:30px auto 30px}
+  .voices{display:grid;gap:18px}
+  @media(min-width:760px){.voices{grid-template-columns:1fr 1fr}}
+  .voice{border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;background:linear-gradient(180deg,rgba(20,36,31,.75),rgba(12,21,18,.6));position:relative;overflow:hidden}
+  .voice::after{content:"\201D";position:absolute;right:12px;bottom:-24px;font-family:var(--serif);font-size:8rem;color:rgba(226,162,74,.09);line-height:1}
+  .voice .name{font-family:var(--sans);font-weight:800;font-size:1.05rem;color:var(--amber-bright);letter-spacing:.01em}
+  .voice .tag{font-size:.64rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-faint);font-family:var(--sans);margin:3px 0 12px}
+  .voice blockquote{margin:0;font-family:var(--serif);font-style:italic;font-size:1.02rem;line-height:1.5;color:var(--ink);position:relative;z-index:1}
+  .voice blockquote+blockquote{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .voice.warnv{border-color:rgba(215,106,76,.45)}
+  .voice.warnv .name{color:var(--danger-2)}
+
+  /* ---------- 4. MYCELIAL ---------- */
+  .myco{display:grid;grid-template-columns:1fr;gap:22px}
+  @media(min-width:900px){.myco{grid-template-columns:1.05fr .95fr}}
+  .netbox{border:1px solid var(--line);border-radius:16px;background:radial-gradient(120% 120% at 50% 0%,rgba(31,81,64,.25),transparent 60%),#0b1512;padding:8px;overflow-x:auto}
+  .netbox svg{display:block;width:100%;height:auto;min-width:320px}
+  .organisms{display:grid;gap:12px}
+  .org{border:1px solid var(--line-soft);border-left:3px solid var(--ever-bright);border-radius:0 10px 10px 0;padding:12px 14px;background:rgba(17,30,24,.5)}
+  .org h4{margin:0 0 3px;font-size:.95rem;font-family:var(--sans);color:var(--ink)}
+  .org p{margin:0;font-size:.87rem;color:var(--ink-soft)}
+  .org.rule{border-left-color:var(--amber)}
+  .org.rule h4{color:var(--amber-bright)}
+
+  /* ---------- 5. MORPHOLOGICAL ---------- */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center}
+  .filters .flab{font-size:.66rem;color:var(--ink-faint);font-family:var(--sans);letter-spacing:.12em;text-transform:uppercase;margin-right:4px}
+  .fbtn{font-family:var(--sans);font-size:.76rem;background:transparent;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;transition:.15s}
+  .fbtn:hover{border-color:var(--amber);color:var(--ink)}
+  .fbtn.on{background:var(--amber);color:#0c1512;border-color:var(--amber);font-weight:700}
+  .matrix{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+  .matrix-inner{min-width:640px}
+  .mrow{display:grid;grid-template-columns:150px 1fr;border-top:1px solid var(--line-soft)}
+  .mrow:first-child{border-top:none}
+  .mrow.hidden{display:none}
+  .mrow .fn{padding:16px 14px;background:rgba(31,81,64,.14);font-family:var(--sans);font-weight:700;font-size:.82rem;letter-spacing:.04em;color:var(--ever-bright);border-right:1px solid var(--line-soft);display:flex;align-items:flex-start}
+  .mcells{display:grid;gap:0}
+  .mcell{padding:13px 16px;border-top:1px dashed var(--line-soft);display:flex;flex-direction:column;gap:8px}
+  .mcell:first-child{border-top:none}
+  .mcell p{margin:0;font-size:.9rem;color:var(--ink-soft)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--ink-soft)}
+  .chip.cap{color:var(--fog);border-color:var(--line)}
+  .chip.aut-draft{color:#9fc9b6;border-color:rgba(60,138,108,.5);background:rgba(31,81,64,.2)}
+  .chip.aut-appr{color:var(--amber-bright);border-color:rgba(226,162,74,.5);background:rgba(226,162,74,.1)}
+  .chip.aut-auto{color:var(--danger-2);border-color:rgba(215,106,76,.5);background:rgba(215,106,76,.1)}
+  .autolegend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-family:var(--sans);font-size:.72rem;color:var(--ink-faint)}
+  .autolegend span{display:inline-flex;align-items:center;gap:6px}
+  .autolegend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+  /* ---------- 6. $0 MANDATE ---------- */
+  .mandate{background:#07100d;border:1px dashed var(--ever);border-radius:14px;padding:8px 4px}
+  .m0-head{font-family:var(--mono);color:var(--ever-bright);font-size:.82rem;padding:14px 18px 6px;letter-spacing:.04em}
+  .m0-list{list-style:none;margin:0;padding:0}
+  .m0-list li{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 18px;border-top:1px solid #12201c;font-family:var(--mono);font-size:.9rem;color:var(--ink)}
+  .m0-list li .box{width:16px;height:16px;border:1.5px solid var(--ever-bright);border-radius:3px;flex:none}
+  .m0-list li .cost{font-size:.66rem;color:var(--ever-bright);border:1px solid var(--ever);border-radius:5px;padding:3px 8px;white-space:nowrap}
+  .m0-foot{padding:16px 18px;border-top:1px solid #12201c;color:var(--amber-bright);font-family:var(--mono);font-size:.86rem;line-height:1.5}
+
+  /* ---------- SYNTHESIS CLIMAX ---------- */
+  .climax{margin-top:96px;border-top:1px solid var(--line);padding-top:12px}
+  .climax .over{text-align:center}
+  .climax h2{font-size:clamp(1.9rem,6vw,3.4rem);text-align:center;margin:.15em 0 .1em;
+    background:linear-gradient(180deg,#f4c069,#c8894a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .climax .csub{text-align:center;color:var(--fog);font-style:italic;max-width:62ch;margin:0 auto 40px}
+  .themes{display:grid;gap:16px}
+  @media(min-width:820px){.themes{grid-template-columns:1fr 1fr}}
+  .theme{border:1px solid var(--line);border-radius:16px;padding:24px 22px;background:linear-gradient(180deg,rgba(23,48,42,.6),rgba(12,21,18,.7));position:relative;overflow:hidden}
+  .theme .tn{font-family:var(--mono);font-size:2.2rem;font-weight:700;color:rgba(226,162,74,.28);line-height:1;position:absolute;top:14px;right:20px}
+  .theme h3{font-size:1.18rem;margin:0 0 8px;max-width:22ch}
+  .theme p{margin:0;color:var(--ink-soft);font-size:.95rem}
+  .theme .metric{margin-top:14px;display:inline-block;font-family:var(--mono);font-size:.68rem;color:var(--amber-bright);border:1px solid rgba(226,162,74,.4);border-radius:6px;padding:4px 9px;letter-spacing:.03em}
+
+  .interlude{max-width:70ch;margin:44px auto;text-align:center;color:var(--ink-soft);font-style:italic;font-size:1.05rem}
+
+  .decision{margin-top:40px;border:1px solid var(--amber);border-radius:18px;overflow:hidden;box-shadow:0 24px 60px -30px rgba(226,162,74,.35)}
+  .decision .dhead{background:linear-gradient(90deg,rgba(226,162,74,.16),transparent);padding:20px 24px;border-bottom:1px solid var(--line)}
+  .decision .dhead .up{color:var(--amber)}
+  .decision .dhead h3{font-size:1.4rem;margin:6px 0 0}
+  .build{display:grid;gap:0}
+  @media(min-width:760px){.build{grid-template-columns:1fr 1fr}}
+  .build .pick{padding:22px 24px;border-top:1px solid var(--line-soft)}
+  @media(min-width:760px){.build .pick:nth-child(2){border-left:1px solid var(--line-soft)}}
+  .build .pick .badge{font-family:var(--sans);font-weight:800;color:#0c1512;background:var(--amber-bright);border-radius:6px;padding:2px 9px;font-size:.72rem;display:inline-block;margin-bottom:10px}
+  .build .pick h4{font-size:1.05rem;margin:0 0 6px}
+  .build .pick p{margin:0;color:var(--ink-soft);font-size:.92rem}
+  .deferred{padding:22px 24px;border-top:1px solid var(--line)}
+  .deferred .up{color:var(--danger-2)}
+  .deferred ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+  .deferred li{display:grid;grid-template-columns:auto 1fr;gap:12px;font-size:.92rem;color:var(--ink-soft)}
+  .deferred li .x{color:var(--danger);font-family:var(--sans);font-weight:800}
+  .deferred li b{color:var(--ink);font-family:var(--sans);font-weight:600}
+
+  footer{margin-top:80px;text-align:center;color:var(--ink-faint);font-size:.72rem;font-family:var(--mono);border-top:1px solid var(--line-soft);padding-top:28px}
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<svg class="topo" viewBox="0 0 1200 1600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <g fill="none" stroke="#274a3f" stroke-width="1.1" opacity="0.55">
+    <path d="M-50,220 C220,120 460,300 700,210 C920,128 1080,300 1260,240"/>
+    <path d="M-50,300 C220,200 470,380 700,290 C930,208 1080,380 1260,320"/>
+    <path d="M-50,380 C220,290 480,460 700,370 C940,290 1085,460 1260,400"/>
+    <path d="M-50,470 C230,380 480,540 700,460 C940,382 1090,540 1260,490"/>
+    <path d="M-50,600 C240,520 470,660 700,600 C930,545 1090,660 1260,620"/>
+    <path d="M-50,760 C240,690 470,820 700,770 C930,725 1090,820 1260,790"/>
+    <path d="M-50,940 C240,870 470,1000 700,950 C930,905 1090,1000 1260,970"/>
+    <path d="M-50,1140 C240,1070 470,1200 700,1150 C930,1105 1090,1200 1260,1170"/>
+    <path d="M-50,1340 C240,1270 470,1400 700,1350 C930,1305 1090,1400 1260,1370"/>
+  </g>
+  <g fill="none" stroke="#3a6a58" stroke-width="1.4" stroke-dasharray="2 9" opacity="0.5" stroke-linecap="round">
+    <path d="M120,1500 C260,1200 180,980 360,760 C520,560 460,360 620,180 C740,60 720,-40 900,-120"/>
+  </g>
+</svg>
+
+<div class="wrap">
+
+  <nav style="padding-top:28px;font-family:var(--mono);font-size:.78rem">
+    <a href="index.html">&larr; Project Index</a>
+    <span style="color:var(--ink-faint)"> &nbsp;·&nbsp; </span>
+    <a href="context.html">Context &amp; Research</a>
+    <span style="color:var(--ink-faint)"> &nbsp;·&nbsp; you are reading the raw brainstorm archive</span>
+  </nav>
+
+  <!-- ============ HEADER ============ -->
+  <header class="masthead">
+    <div class="kicker mono">PHASE 2 · BRAINSTORMING FIELD NOTES · EXPEDITION LOG</div>
+    <h1>Where the Pavement Ends,<br>the Data Begins</h1>
+    <p class="tagline">Software &amp; AI opportunities for <b>WNC Shuttle</b> — a family-owned 4x4 service into the remote Blue Ridge. <em>“We go where others won’t… or can’t.”</em></p>
+    <div class="metaline">Waynesville, NC · F-150 Platinum · Lincoln Navigator · Ford Transit · (828) 400-3987</div>
+
+    <div class="metacard">
+      <div class="strip">
+        <div class="cell"><div class="up lab">Session Date</div><div class="val">10 July 2026</div></div>
+        <div class="cell"><div class="up lab">Mode</div><div class="val">Ideate for me</div></div>
+        <div class="cell"><div class="up lab">Techniques</div><div class="val">6 run · 1 invented pair</div></div>
+        <div class="cell"><div class="up lab">Status</div><div class="val">Complete · Decision made</div></div>
+      </div>
+      <div class="obj"><b>Topic —</b> Technology &amp; AI opportunities for WNC Shuttle across marketing, sales, workflow, scheduling &amp; automation.</div>
+      <div class="obj"><b>Goal —</b> Generate a wide field of ideas for how software and AI could make Justin’s private transportation business more effective and efficient; expect many, choose 1–2 to pursue.</div>
+    </div>
+
+    <div class="countbar">
+      <div class="stat"><div class="n">118</div><div class="t up">IDEAS SURFACED</div></div>
+      <div class="stat"><div class="n">6</div><div class="t up">TECHNIQUES</div></div>
+      <div class="stat"><div class="n">4</div><div class="t up">CONVERGENT THEMES</div></div>
+      <div class="stat"><div class="n">2</div><div class="t up">TO BUILD</div></div>
+      <div class="stat"><div class="n">3</div><div class="t up">DELIBERATELY DEFERRED</div></div>
+    </div>
+  </header>
+
+  <!-- ============ 1. DISNEY METHOD ============ -->
+  <section id="disney" class="reveal">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>The Disney Method</h2>
+      <div class="sub">Three rooms, three minds — the Dreamer imagines, the Realist grounds, the Critic warns.</div>
+    </div>
+    <p class="lead">The same fleet of ideas walks through three doors. What survives all three rooms is worth building.</p>
+
+    <div class="disney">
+      <div class="room dreamer">
+        <h3><span class="dot"></span>The Dreamer</h3>
+        <p class="room-sub">No constraints. What if the mountain thought for itself?</p>
+        <ul>
+          <li>An AI dispatcher that never sleeps — reads inbound texts, emails &amp; voicemails, quotes, holds a soft reservation, wakes Justin only for exceptions.</li>
+          <li><b>“Mountain Road Brain”</b> — every road WNC Shuttle has driven, scored for passability by vehicle, season &amp; weather; company knowledge as a queryable asset.</li>
+          <li>A backhaul marketplace — the empty return leg from a remote drop auto-listed at a discount.</li>
+          <li>Voice AI answers (828) 400-3987 24/7 in Justin’s tone, quotes from real rules, books.</li>
+          <li>Dashcam auto-clips scenic moments; AI edits a 20-second reel texted to the client as a keepsake and share asset.</li>
+          <li>Predictive staffing from AVL flight schedules + Harrah’s events + festivals + leaf forecast — tells Justin how many drivers to have on standby.</li>
+          <li>Dynamic pricing that prices deadhead risk explicitly — cheaper if you book the return, expensive if you strand the vehicle.</li>
+          <li><b>“Trailhead Concierge”</b> — name the hike; it plans drop point, pickup point, pace buffer &amp; weather bail-out.</li>
+          <li>AI writes the confirmation email as Justin would, with local color about the route.</li>
+          <li>Fishing integration — AI watches Pigeon River flow/stocking data, nudges past anglers when conditions are prime, one-tap rebook.</li>
+          <li>A digital twin of the fleet — maintenance predicted from OBD data so a vehicle never goes down mid-season.</li>
+          <li>A cabin-owner channel — auto-generate a co-branded booking page for every VRBO/Airbnb host in remote WNC; hosts embed it for a referral cut.</li>
+          <li>A wedding-day command center — AI builds the shuttle plan from guest list &amp; venue, texts every guest their pickup window.</li>
+          <li>A post-ride AI phone call in a warm voice captures a review, routes complaints to Justin instantly.</li>
+          <li>A “no-show risk” score per booking, driving reminder intensity and whether to require prepay.</li>
+        </ul>
+      </div>
+
+      <div class="room realist">
+        <h3><span class="dot"></span>The Realist</h3>
+        <p class="room-sub">What actually ships. Prove the flow, own the data.</p>
+        <ul>
+          <li>Ingestion layer first — pull bookingtool.net data via export/webhook into Postgres/Supabase; you cannot automate what you cannot query.</li>
+          <li>Wrap the phone line with a Twilio number that forwards to Justin but records, transcribes &amp; summarizes into a lead row.</li>
+          <li>The confirmation gate becomes an approve/deny SMS to Justin with an AI-drafted summary and recommended answer — one tap.</li>
+          <li>Zapier is the right on-ramp, wrong destination — prove the flow there, port hot paths to a small service when volume justifies.</li>
+          <li>A quote-assistant LLM behind a webform asks the four questions the booking tool doesn’t (luggage, pace, road surface, kids) and pre-fills the real quote.</li>
+          <li>GA4 + AIOSEO already installed — wire Search Console data into an LLM that writes the pages the search demand implies.</li>
+          <li>A Zap on ride-complete texts a Google review link 90 minutes after drop-off, when warmth is highest.</li>
+          <li>Road knowledge as a simple table first — road, vehicle, season, verdict, last-verified, driver note; AI mines Justin’s memory via interview.</li>
+          <li>Rebuild the blog as programmatic SEO — one page per (origin, destination) pair, AI-drafted, human-approved.</li>
+          <li>Flight tracking already exists internally — extend it to push proactive SMS to the client.</li>
+          <li>The driver app is a PWA, not native — schedule, nav link, checklist, drop photo, tap-to-complete.</li>
+          <li>Google Calendar as the source of truth so Justin never opens a second tool.</li>
+          <li>Stripe is already there — use payment links and holds rather than building billing.</li>
+          <li>Deadhead pricing needs only distance-from-base and drop remoteness, both computable from the address at quote time.</li>
+          <li>Every AI feature starts as draft-for-human, never send-without-review, until trust is earned.</li>
+        </ul>
+      </div>
+
+      <div class="room critic">
+        <div class="room-hazard"></div>
+        <h3><span class="dot"></span>The Critic</h3>
+        <p class="room-sub">Every one of these is a way to fail on a mountain with no cell signal.</p>
+        <ul>
+          <li>Voice AI mishears a mountain address; the client stands at the wrong trailhead with no cell service — the failure is not a bad review, it is a rescue.</li>
+          <li>Cell coverage is absent across most of the service area — any driver app must work fully offline and sync later.</li>
+          <li>Dynamic pricing collides with “we do not negotiate rates” — surge looks like the Uber behavior he defines himself against.</li>
+          <li>Backhaul matching with a 3-vehicle fleet has almost no liquidity; the math needs density he does not have.</li>
+          <li>An AI that books without Justin’s confirmation will eventually accept a trip the vehicle cannot physically make — the confirmation gate IS the safety system, not friction.</li>
+          <li>Programmatic SEO on a WordPress site with 10 posts risks a thin-content penalty that torches the domain he has.</li>
+          <li>Dashcam clips of clients create a consent and privacy problem in a business built on discretion.</li>
+          <li>Every automation adds a system Justin must debug at 4am before an airport run — reliability beats cleverness.</li>
+          <li>Predictive staffing means asking 1099 contractors to hold availability, which 1099 status legally cannot compel.</li>
+          <li>If AI writes in Justin’s voice and gets a fact wrong, the “family-owned, talk to a real person” moat is what pays.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="synth-note">
+      <div class="up">Disney synthesis</div>
+      <p>The confirmation gate is not friction to remove — it is business logic to encode. What Justin checks in those 30 seconds is the undocumented core of the company.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. TIME TRAVEL TALK SHOW ============ -->
+  <section id="timetravel" class="reveal">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>Time Travel Talk Show</h2>
+      <div class="sub">Three versions of Justin take the guest chair — 2022, 2026, 2030 — and interview each other.</div>
+    </div>
+    <p class="lead">A transcript across eras. The past explains the scars, the present names the pain, the future spends the regret.</p>
+
+    <div class="talkshow">
+      <div class="era era-2022">
+        <div class="era-rail"><span class="era-year">2022</span><span class="era-line"></span></div>
+        <div class="era-body">
+          <div class="who">Past Self</div>
+          <div class="role">The one who started the blog and let it die</div>
+          <div class="transcript">
+            <div class="qa"><span class="mk">SCAR</span><p>Wrote 10 posts, then quit — content died for lack of a <b>distribution loop</b>, not quality. Any AI content plan must ship with distribution or die the same way.</p></div>
+            <div class="qa"><span class="mk">SCAR</span><p>“Blog has moved to Facebook” traded an owned asset for a rented channel. AI should rebuild the owned asset and syndicate <em>to</em> Facebook, not the reverse.</p></div>
+            <div class="qa"><span class="mk">VOICE</span><p>The April Fools “Hyper-Express” post proves he has a voice and enjoys it — AI writing must amplify that voice, not sand it into corporate mush.</p></div>
+            <div class="qa"><span class="mk">SIGNAL</span><p>The Apple Festival 10%-off-hourly post worked but was never systematized — build an events-to-offers automation off the WNC festival calendar.</p></div>
+            <div class="qa"><span class="mk">SIGNAL</span><p>The insurance post is authority content aimed at DRIVERS, not riders — he’s been recruiting all along. Two audiences, one site.</p></div>
+            <div class="qa"><span class="mk">LIMIT</span><p>He closed for the holidays for a family event — the business is capacity-bound by one human’s calendar, and every idea must respect that.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="era era-2026">
+        <div class="era-rail"><span class="era-year">2026</span><span class="era-line"></span></div>
+        <div class="era-body">
+          <div class="who">Present Self</div>
+          <div class="role">Reaching for Zapier, feeling the pain</div>
+          <div class="transcript">
+            <div class="qa"><span class="mk">PAIN</span><p>He reaches for Zapier because the pain is rekeying — the same trip typed into booking tool, calendar, email, invoice. Name the goal: <b>single-entry</b>.</p></div>
+            <div class="qa"><span class="mk">TRAP</span><p>He’s exploring tools instead of mapping his workflow. The highest-value first deliverable isn’t software — it’s a written map of every touchpoint from inquiry to payment.</p></div>
+            <div class="qa"><span class="mk">CORE</span><p>He gates every confirmation by hand; what he checks in 30 seconds is the true business logic, and it’s undocumented. Encode that rule set.</p></div>
+            <div class="qa warn"><span class="mk">RISK</span><p>He pays for a booking tool that owns his customer data — the biggest silent risk is platform lock-in on bookingtool.net.</p></div>
+            <div class="qa"><span class="mk">GAP</span><p>There’s no CRM; every repeat customer lives in his head. An AI-maintained client memory is pure margin.</p></div>
+            <div class="qa"><span class="mk">GAP</span><p>Quotes that never convert are invisible — the lost-quote log is the most valuable dataset he isn’t collecting.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="era era-2030">
+        <div class="era-rail"><span class="era-year">2030</span><span class="era-line"></span></div>
+        <div class="era-body">
+          <div class="who">Future Self</div>
+          <div class="role">Looking back on what actually mattered</div>
+          <div class="transcript">
+            <div class="qa"><span class="mk">TRUTH</span><p>The fleet never grew past five vehicles; the money came from rate per hour of Justin’s attention, not vehicle count.</p></div>
+            <div class="qa"><span class="mk">ASSET</span><p>The road-passability database became licensable — to other operators and to cabin-rental platforms.</p></div>
+            <div class="qa"><span class="mk">TRUTH</span><p>The winning AI wasn’t the flashy one — it was a boring classifier deciding which inquiries were worth his phone call.</p></div>
+            <div class="qa"><span class="mk">TRUTH</span><p>The driver shortage never resolved; the automation that mattered most onboarded a 1099 driver in 45 minutes instead of two weeks.</p></div>
+            <div class="qa"><span class="mk">PIVOT</span><p>Airport work became a commodity while “we go where others won’t” trips became 70% of revenue at 3× margin — software should have pointed at the weird trips all along.</p></div>
+            <div class="qa warn"><span class="mk">WARNING</span><p>The year he let AI answer the phone, repeat bookings dropped 20% before he noticed — the voice WAS the product.</p></div>
+            <div class="qa"><span class="mk">WIN</span><p>The best decision was owning the booking flow, so he owned the data that trained everything else.</p></div>
+            <div class="qa"><span class="mk">REGRET</span><p>He wishes he’d recorded every ride’s route and timing from day one — a proprietary mountain travel-time model, where Google is badly wrong, was the real moat.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="synth-note">
+      <div class="up">Talk-show synthesis</div>
+      <p>Across all three eras the constant is that <b>Justin’s attention is the scarce resource</b> and his road knowledge is the unpriced asset. Every idea must either buy back attention or productize knowledge.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. EMPTY SEAT INTERVIEW ============ -->
+  <section id="emptyseat" class="reveal">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>The Empty Seat Interview</h2>
+      <div class="sub">An invented technique — the system’s own waste is personified and given the microphone.</div>
+    </div>
+    <p class="lead">Idle assets, empty legs, dead hours: each has an agenda. We interviewed the waste as a stakeholder. It had a lot to say.</p>
+
+    <div class="stage">
+      <p class="spotlight">The lights come up on an empty six-seat cabin, a cold engine, a quote that never got a reply. One by one, they lean into the mic.</p>
+      <div class="voices">
+
+        <div class="voice">
+          <div class="name">The Deadhead Mile</div>
+          <div class="tag">Paid fuel, paid driver, zero revenue</div>
+          <blockquote>Half of every airport run is me — paid fuel and paid driver at zero revenue. A return-leg discount offered to the SAME client at quote time converts me. Round-trip attach rate is the highest-leverage metric in the business.</blockquote>
+          <blockquote>And I’m predictable — same corridor, same time. Match me against scheduled demand (pharmacy runs, document courier for Waynesville businesses) as a standing contract, not a marketplace.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Idle Hour</div>
+          <div class="tag">The gap between trips</div>
+          <blockquote>Sell me as a discounted “flex window” rate — the client accepts a 90-minute pickup window for 25% off, and Justin fills the hour. Let AI propose the windows.</blockquote>
+          <blockquote>I’m also when Justin does admin. Automating admin doesn’t create free time — it creates SELLABLE time. Every admin hour removed is billable capacity.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Empty Seat</div>
+          <div class="tag">Six seats, one passenger</div>
+          <blockquote>Six seats, one passenger, Waynesville to AVL at 5am every day — a scheduled shared airport shuttle sold by the seat, AI-optimized pickup order. A different business inside the current one.</blockquote>
+          <blockquote>But careful: sharing me breaks the word “private” in the value prop. Run it as a separate brand, or only on the AVL corridor where the premium isn’t why they chose him.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Unbooked Saturday</div>
+          <div class="tag">The leaf-season weekend nobody filled</div>
+          <blockquote>I’m the peak-season weekend that went empty. Reach cabin-rental guests at the moment they book the cabin — not the moment they land.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Cancelled Trip</div>
+          <div class="tag">Cancelled at 25 hours out</div>
+          <blockquote>I cancelled at 25 hours out, cost nothing, and left a hole nothing filled. A waitlist AI could instantly offer the freed slot to the lost-quote log.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Lost Quote</div>
+          <div class="tag">Asked for a price, never heard back</div>
+          <blockquote>I asked for a price and never heard a reason to say yes. An AI follow-up with a specific objection guess per quote type — price, timing, road uncertainty — beats any new-lead spend.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Rejected Ride</div>
+          <div class="tag">The trip no vehicle could reach</div>
+          <blockquote>Justin said no because no vehicle could reach me. Log me — a map of demand he had to REFUSE is the business case for vehicle #4, and a referral fee today.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Unrecorded Route</div>
+          <div class="tag">22 minutes, not Google’s 8</div>
+          <blockquote>Nobody wrote down that the last mile took 22 minutes, not Google’s 8. Every trip should silently log actual vs. predicted time — free data collection, compounding value.</blockquote>
+        </div>
+
+        <div class="voice">
+          <div class="name">The Silent Driver</div>
+          <div class="tag">Knows who wants the history of Cataloochee</div>
+          <blockquote>I know which client hates small talk and which wants the history of Cataloochee. A one-line preference note at trip start is the cheapest luxury upgrade in the business.</blockquote>
+        </div>
+
+        <div class="voice warnv">
+          <div class="name">The Untouched Voicemail</div>
+          <div class="tag">Came in at 11pm, answered at 8am</div>
+          <blockquote>I came in at 11pm and was answered at 8am — they’d booked someone else at 11:15. An after-hours AI that texts back an estimate and a promise recovers the ones who leave.</blockquote>
+        </div>
+
+        <div class="voice warnv">
+          <div class="name">The Facebook Post</div>
+          <div class="tag">40 likes, zero bookings</div>
+          <blockquote>I got 40 likes and drove zero bookings — because I had no link and no offer.</blockquote>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. MYCELIAL AUDIT ============ -->
+  <section id="mycelial" class="reveal">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>The Mycelial Audit</h2>
+      <div class="sub">An invented, biomimetic technique — model the business as a fungal network that grows by connection, not mass.</div>
+    </div>
+    <p class="lead">A small fruiting body sustained by hidden reciprocal exchange with neighboring organisms. The mushroom stays small on purpose; the hyphae reach where it cannot.</p>
+
+    <div class="myco">
+      <div class="netbox">
+        <svg viewBox="0 0 520 480" role="img" aria-label="Mycelial network diagram of WNC Shuttle and its partner organisms">
+          <defs>
+            <radialGradient id="core" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#f4c069"/>
+              <stop offset="100%" stop-color="#c8894a"/>
+            </radialGradient>
+          </defs>
+          <!-- hyphae -->
+          <g stroke="#3a6a58" fill="none" stroke-width="1.6" opacity="0.85">
+            <path d="M260,240 C180,180 150,120 110,80"/>
+            <path d="M260,240 C340,180 380,130 430,90"/>
+            <path d="M260,240 C150,240 100,220 60,210"/>
+            <path d="M260,240 C370,240 430,225 480,220"/>
+            <path d="M260,240 C190,300 150,350 120,400"/>
+            <path d="M260,240 C330,300 370,360 410,405"/>
+            <path d="M260,240 C260,320 260,380 260,440"/>
+          </g>
+          <g stroke="#274a3f" fill="none" stroke-width="1" opacity="0.55" stroke-dasharray="2 6">
+            <path d="M110,80 C160,140 200,120 260,240"/>
+            <path d="M430,90 C380,150 330,140 260,240"/>
+            <path d="M120,400 C180,340 220,340 260,240"/>
+            <path d="M410,405 C350,340 320,340 260,240"/>
+            <path d="M60,210 C120,260 160,300 120,400"/>
+            <path d="M480,220 C420,270 380,320 410,405"/>
+          </g>
+          <!-- nodes -->
+          <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#cfe0d5" text-anchor="middle">
+            <g><circle cx="110" cy="80" r="7" fill="#3c8a6c"/><text x="110" y="64">Cabin hosts</text></g>
+            <g><circle cx="430" cy="90" r="7" fill="#3c8a6c"/><text x="430" y="74">Harrah’s Cherokee</text></g>
+            <g><circle cx="60" cy="210" r="7" fill="#3c8a6c"/><text x="60" y="194">Fly-fishing guides</text></g>
+            <g><circle cx="480" cy="220" r="7" fill="#3c8a6c"/><text x="480" y="204">Wedding venues</text></g>
+            <g><circle cx="120" cy="400" r="7" fill="#3c8a6c"/><text x="120" y="422">Bryson City op.</text></g>
+            <g><circle cx="410" cy="405" r="7" fill="#3c8a6c"/><text x="410" y="427">Franklin op.</text></g>
+            <g><circle cx="260" cy="440" r="6" fill="#5b7488"/><text x="260" y="462">Composted blog</text></g>
+          </g>
+          <!-- fruiting body -->
+          <circle cx="260" cy="240" r="26" fill="url(#core)"/>
+          <circle cx="260" cy="240" r="26" fill="none" stroke="#f4c069" stroke-width="1.5" opacity="0.5"/>
+          <text x="260" y="237" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" font-weight="700" fill="#0c1512">WNC</text>
+          <text x="260" y="249" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" font-weight="700" fill="#0c1512">Shuttle</text>
+        </svg>
+      </div>
+
+      <div class="organisms">
+        <div class="org"><h4>Root tips: cabin hosts</h4><p>They touch the guest three months before Justin could — give each an AI-generated co-branded transport page and a referral code.</p></div>
+        <div class="org"><h4>Nutrient-dense host: Harrah’s Cherokee</h4><p>A standing “safe ride home” arrangement, AI-dispatched, casino-comped — recurring revenue at zero marketing cost.</p></div>
+        <div class="org"><h4>Symbionts: fly-fishing guides &amp; outfitters</h4><p>Not competitors. They need clients delivered to remote water; he needs the trip. Build a shared booking hand-off.</p></div>
+        <div class="org"><h4>Wedding venues in Maggie Valley</h4><p>Give coordinators a free AI-built “guest transport plan” tool and he becomes the default.</p></div>
+        <div class="org"><h4>Hyphae reach farther than the body</h4><p>Partner with a Bryson City or Franklin operator for trips too far from base — revenue-shared, disclosed, and contractually held to standard. The opposite of a farm-out.</p></div>
+        <div class="org"><h4>Decomposition</h4><p>The 10 stale blog posts are nutrient, not waste — AI re-composts them into current structured pages that feed search.</p></div>
+        <div class="org"><h4>Chemical signaling</h4><p>The network needs a shared signal for “I have capacity Saturday” — a simple broadcast to partner businesses beats any ad.</p></div>
+        <div class="org"><h4>Nature’s redundancy</h4><p>Two 1099 drivers who can each cover any trip beat one perfect driver — cross-training is the AI onboarding play.</p></div>
+        <div class="org"><h4>Slime-mold routing</h4><p>Reinforce paths that carry traffic — track which referral sources actually convert and starve the rest. Most small businesses fertilize everything equally.</p></div>
+        <div class="org rule"><h4>The mushroom is small on purpose</h4><p>Refuse to grow the fleet; grow the network of referrers. Ten cabin hosts beat one more Navigator.</p></div>
+        <div class="org rule"><h4>Symbiosis has a cost</h4><p>Every partner integration is a relationship a human must maintain — cap the network at 8–12 active symbionts.</p></div>
+        <div class="org rule"><h4>The fruiting body’s job is spores</h4><p>The ride itself is the marketing — a memorable trailhead drop generates more demand than any funnel.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. MORPHOLOGICAL ANALYSIS ============ -->
+  <section id="morph" class="reveal">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>Morphological Analysis</h2>
+      <div class="sub">Three parameters combined — business function × AI capability × autonomy level — to surface untried configurations.</div>
+    </div>
+    <p class="lead">The grid forces combinations you’d never brainstorm one at a time. Filter by function; watch the autonomy chips — nothing reaches “autonomous” except a reversible action.</p>
+
+    <div class="filters">
+      <span class="flab">Function</span>
+      <button class="fbtn on" data-f="all">All</button>
+      <button class="fbtn" data-f="Marketing">Marketing</button>
+      <button class="fbtn" data-f="Sales">Sales</button>
+      <button class="fbtn" data-f="Scheduling">Scheduling</button>
+      <button class="fbtn" data-f="In-ride">In-ride</button>
+      <button class="fbtn" data-f="Billing">Billing</button>
+      <button class="fbtn" data-f="Driver ops">Driver ops</button>
+      <button class="fbtn" data-f="Knowledge">Knowledge</button>
+      <button class="fbtn" data-f="Cross-cut">Cross-cut</button>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-inner">
+
+        <div class="mrow" data-f="Marketing">
+          <div class="fn">Marketing</div>
+          <div class="mcells">
+            <div class="mcell"><p>AI vision on driver-shot photos auto-tags scenery, builds a location-tagged image library, drafts an Instagram post per unique destination — a “we go there” proof engine running off work he already does.</p><div class="chips"><span class="chip cap">vision</span><span class="chip aut-draft">draft-for-human</span></div></div>
+            <div class="mcell"><p>An AI that has read all 10 posts, the FAQ and the About page, then writes any new page in his exact voice and constraints (no pets, no limos, no negotiating).</p><div class="chips"><span class="chip cap">RAG</span><span class="chip aut-draft">draft-for-human</span></div></div>
+            <div class="mcell"><p>Forecast seasonal search demand (leaf peeping, Cataloochee ski, Apple Festival) and publish the page six weeks before query volume spikes.</p><div class="chips"><span class="chip cap">prediction</span><span class="chip aut-draft">draft-for-human</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="Sales">
+          <div class="fn">Sales</div>
+          <div class="mcells">
+            <div class="mcell"><p>Score every inbound inquiry as bookable / needs-Justin / decline — and auto-decline wheelchair and pet requests politely and instantly with a referral to someone who can serve them.</p><div class="chips"><span class="chip cap">classification</span><span class="chip aut-auto">autonomous</span></div></div>
+            <div class="mcell"><p>AI drafts the confirmation email with route-specific notes (“we’ll take 276, not the Parkway — it closes at dusk this time of year”).</p><div class="chips"><span class="chip cap">LLM</span><span class="chip aut-appr">human-approves</span></div></div>
+            <div class="mcell"><p>After-hours AI answers, gathers trip details, promises human confirmation, texts Justin a summary — never quotes a binding price.</p><div class="chips"><span class="chip cap">voice</span><span class="chip aut-draft">draft-for-human</span></div></div>
+            <div class="mcell"><p>A quote-to-book probability model telling Justin which three quotes to personally call today.</p><div class="chips"><span class="chip cap">prediction</span><span class="chip aut-appr">human-approves</span></div></div>
+            <div class="mcell"><p>An FAQ chatbot grounded strictly in his unusually thorough FAQ page — the cheapest, safest AI win available, and it converts.</p><div class="chips"><span class="chip cap">RAG</span><span class="chip aut-auto">autonomous (grounded)</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="Scheduling">
+          <div class="fn">Scheduling</div>
+          <div class="mcells">
+            <div class="mcell"><p>A mountain travel-time model trained on his own trip logs, correcting Google’s ETAs — prevents the 5am airport miss.</p><div class="chips"><span class="chip cap">prediction</span><span class="chip aut-appr">human-approves</span></div></div>
+            <div class="mcell"><p>An agent watching the flight feed that, on a delay, texts the client the new plan, reshuffles the day, and presents Justin one approval.</p><div class="chips"><span class="chip cap">agents</span><span class="chip aut-appr">human-approves</span></div></div>
+            <div class="mcell"><p>A road-condition risk score per trip (ice, fog, downed trees) computed the night before, flagging trips to re-plan.</p><div class="chips"><span class="chip cap">prediction</span><span class="chip cap">weather</span><span class="chip aut-draft">draft-for-human</span></div></div>
+            <div class="mcell"><p>Given tomorrow’s confirmed rides, propose the vehicle-to-trip assignment minimizing deadhead miles — with 3 vehicles, small enough to solve exactly.</p><div class="chips"><span class="chip cap">optimization</span><span class="chip aut-appr">human-approves</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="In-ride">
+          <div class="fn">In-ride</div>
+          <div class="mcells">
+            <div class="mcell"><p>An offline-capable in-vehicle guide answering “what’s that mountain?” — a luxury touch that works with no cell signal.</p><div class="chips"><span class="chip cap">voice</span><span class="chip aut-auto">autonomous (offline)</span></div></div>
+            <div class="mcell"><p>Dashcam ML flagging harsh braking and speed into a driver scorecard — vital when your differentiator is safety and your drivers are contractors.</p><div class="chips"><span class="chip cap">vision</span><span class="chip cap">safety</span><span class="chip aut-draft">draft-for-human</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="Billing">
+          <div class="fn">Billing</div>
+          <div class="mcells">
+            <div class="mcell"><p>Ride-complete triggers Stripe capture, receipt and review request, with a wait-time surcharge computed from GPS dwell time and evidenced.</p><div class="chips"><span class="chip cap">agents</span><span class="chip aut-auto">autonomous (reversible)</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="Driver ops">
+          <div class="fn">Driver ops</div>
+          <div class="mcells">
+            <div class="mcell"><p>Generate the 1099 driver handbook, route-specific briefings, and a quiz that certifies a driver on a given road before assigning them to it.</p><div class="chips"><span class="chip cap">LLM</span><span class="chip aut-draft">draft-for-human</span></div></div>
+            <div class="mcell"><p>A driver-facing assistant answering “am I allowed to take a cooler?” from actual policy, in the field, offline-cached.</p><div class="chips"><span class="chip cap">RAG</span><span class="chip aut-auto">autonomous (grounded)</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="Knowledge">
+          <div class="fn">Knowledge</div>
+          <div class="mcells">
+            <div class="mcell"><p>An interview agent that sits with Justin an hour a week and extracts one more chunk of road knowledge into structured data — the most boring idea here, and probably the most valuable.</p><div class="chips"><span class="chip cap">everything</span><span class="chip aut-appr">human-approves</span></div></div>
+            <div class="mcell"><p>Auto-categorize every past trip by type (airport, trailhead, casino, wedding) to reveal the real revenue mix — which he almost certainly doesn’t know precisely.</p><div class="chips"><span class="chip cap">classification</span><span class="chip aut-auto">autonomous</span></div></div>
+          </div>
+        </div>
+
+        <div class="mrow" data-f="Cross-cut">
+          <div class="fn">Cross-cut</div>
+          <div class="mcells">
+            <div class="mcell"><p>A single canonical “trip object” every system reads and writes — the schema IS the architecture decision. Get it right and Zapier becomes trivial; get it wrong and every automation is a translation layer.</p><div class="chips"><span class="chip cap">schema</span><span class="chip aut-appr">foundation</span></div></div>
+            <div class="mcell"><p>Marketing-to-sales bridge: lost-quote log + LLM = a monthly “what people asked for that we couldn’t or didn’t serve” report — strategy from exhaust data.</p><div class="chips"><span class="chip cap">LLM</span><span class="chip aut-draft">draft-for-human</span></div></div>
+            <div class="mcell"><p>Autonomy ladder as a product principle: every feature ships at draft-for-human, graduates to human-approves after 50 correct drafts, and only ever reaches autonomous for reversible actions.</p><div class="chips"><span class="chip cap">principle</span><span class="chip aut-appr">governance</span></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="autolegend">
+      <span><i style="background:#3c8a6c"></i> draft-for-human — AI proposes, Justin sends</span>
+      <span><i style="background:#e2a24a"></i> human-approves — one-tap gate</span>
+      <span><i style="background:#d76a4c"></i> autonomous — reversible / grounded only</span>
+    </div>
+  </section>
+
+  <!-- ============ 6. $0 MANDATE ============ -->
+  <section id="mandate" class="reveal">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2>The $0 Mandate</h2>
+      <div class="sub">Achieve the goal spending literally nothing — no tools, no hires, no ads. Only people, favors, and what he already owns.</div>
+    </div>
+    <p class="lead">Strip away every purchase. What’s left is the do-it-Monday list — and it turns out the foundation of every AI idea above is free.</p>
+
+    <div class="mandate">
+      <div class="m0-head"># do-it-monday.txt — cost of each line: $0</div>
+      <ul class="m0-list">
+        <li><span class="box"></span><span>Turn on the booking tool’s own confirmation email and stop hand-writing them.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>Ask every cabin host he’s ever driven a guest to for a link on their listing page.</span><span class="cost">1 call</span></li>
+        <li><span class="box"></span><span>Put fare estimates on the website — the FAQ already explains the pricing factors, so three sample routes with real prices removes the largest silent objection.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>Ask each happy client for the Google review in the car, at the drop, by name — nothing moves local search like review count.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>Re-publish the 10 dead blog posts with updated dates and internal links to the service pages — free traffic from assets he already owns.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>Record himself talking about mountain roads for 30 minutes on his phone — that transcript is the seed corpus for every AI idea above.</span><span class="cost">1 walk</span></li>
+        <li><span class="box"></span><span>Text the last 100 clients one question — “what almost stopped you from booking?” — and the answer is the roadmap.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>Add “we go where others won’t” to the Google Business Profile and post trailhead photos there weekly — GBP outranks his website for local intent.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>A shared Google Sheet as the dispatch board for his 1099 drivers — free, offline-tolerant, and honestly sufficient at three vehicles.</span><span class="cost">$0</span></li>
+        <li><span class="box"></span><span>Ask the Harrah’s Cherokee concierge for the standing arrangement — the worst answer is no.</span><span class="cost">1 ask</span></li>
+      </ul>
+      <div class="m0-foot">&gt; The $0 mandate’s real lesson: stop paying for anything until the trip log exists. None of the AI above works without data — and the data collection is free, and must start today.</div>
+    </div>
+  </section>
+
+  <!-- ============ SYNTHESIS — CLIMAX ============ -->
+  <section id="synthesis" class="climax reveal">
+    <div class="over up" style="color:var(--amber);letter-spacing:.4em">SUMMIT · THE VIEW FROM THE TOP</div>
+    <h2>What the Whole Session Was Saying</h2>
+    <p class="csub">Six techniques, 118 ideas, one shape underneath. With a 3-vehicle fleet, capacity is fixed and demand is lumpy — so the enemy was never a lack of customers. It is deadhead miles and idle hours. Everything below converges on that.</p>
+
+    <div class="themes">
+      <div class="theme">
+        <span class="tn">01</span>
+        <h3>Capture the data before building anything</h3>
+        <p>The trip log, the lost-quote log, and the refused-ride log are free to start — and every AI idea depends on them. No corpus, no intelligence.</p>
+        <span class="metric">the data collection is free and must start today</span>
+      </div>
+      <div class="theme">
+        <span class="tn">02</span>
+        <h3>Buy back Justin’s attention rather than add tools</h3>
+        <p>Encode the 30-second confirmation check as rules so AI pre-clears the easy 80% and escalates the rest. The gate stays human — but the easy cases stop touching it.</p>
+        <span class="metric">admin-hours-removed = billable capacity</span>
+      </div>
+      <div class="theme">
+        <span class="tn">03</span>
+        <h3>Productize the road knowledge</h3>
+        <p>It is the moat, the training set, the succession risk, and the only licensable asset in the company — and today it lives, undocumented, in one head.</p>
+        <span class="metric">the moat is the roads, not the 4x4s</span>
+      </div>
+      <div class="theme">
+        <span class="tn">04</span>
+        <h3>Attack deadhead miles &amp; idle hours, not customer count</h3>
+        <p>Round-trip attach rate is the highest-leverage metric in a 3-vehicle fleet. Marketing’s old failure was a rented channel with no distribution loop — own the asset, syndicate out.</p>
+        <span class="metric">round-trip attach rate · single-entry schema</span>
+      </div>
+    </div>
+
+    <p class="interlude">“Zapier is the correct instinct for the wrong layer. The real need is single-entry — one canonical trip record that every downstream system reads. Design the schema before buying the glue.”</p>
+
+    <div class="decision">
+      <div class="dhead">
+        <div class="up">The Decision</div>
+        <h3>What to build first — and what to deliberately leave on the mountain</h3>
+      </div>
+      <div class="build">
+        <div class="pick">
+          <span class="badge">BUILD · A</span>
+          <h4>The FAQ-grounded RAG chatbot + after-hours capture</h4>
+          <p>The cheapest, safest, converting win available. Grounded strictly in his unusually thorough FAQ; after hours it answers, captures the trip, promises human confirmation, and never quotes a binding price.</p>
+        </div>
+        <div class="pick">
+          <span class="badge">BUILD · B</span>
+          <h4>The canonical trip object + silent travel-time logging</h4>
+          <p>One trip record every system reads and writes, quietly logging actual vs. predicted time on every ride. The foundation everything else compounds on — and the seed of the proprietary mountain travel-time model.</p>
+        </div>
+      </div>
+      <div class="deferred">
+        <div class="up">Deliberately deferred — and why</div>
+        <ul>
+          <li><span class="x">✕</span><span><b>Dynamic pricing.</b> Surge collides head-on with “we do not negotiate rates” — it looks like the Uber behavior he defines himself against.</span></li>
+          <li><span class="x">✕</span><span><b>The backhaul marketplace.</b> A 3-vehicle fleet has almost no liquidity; the math needs a density he doesn’t have.</span></li>
+          <li><span class="x">✕</span><span><b>Voice AI answering the main line.</b> The year he lets AI answer the phone, repeat bookings drop — the voice IS the product.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    WNC Shuttle · Brainstorming Session · 10 July 2026 · Mode: Ideate for me · 6 techniques · 118 ideas · 4 convergent themes · 2 to build<br>
+    “We go where others won’t… or can’t.” — Waynesville, North Carolina, where the pavement ends.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  // Morphological function filter
+  var btns=document.querySelectorAll('.fbtn');
+  var rows=document.querySelectorAll('.mrow');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      btns.forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var f=b.getAttribute('data-f');
+      rows.forEach(function(r){
+        if(f==='all'||r.getAttribute('data-f')===f){r.classList.remove('hidden');}
+        else{r.classList.add('hidden');}
+      });
+    });
+  });
+  // Scroll reveal
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);} });
+    },{threshold:0.06});
+    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');});
+  }
+})();
+</script>
+</body>
+</html>
